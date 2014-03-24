@@ -1,0 +1,27 @@
+<div id="sidebar-person" class="sidebar-content">
+	<div id="sidebar-media">(todo)</div>
+	<h2>{{dname}}</h2>
+	<div class='hr'></div>
+	<h3>Rodiče:</h3>
+	{% if parents %}
+		<div id="parents">
+			<a href="javascript:void(0)" data-cyid="{{parents.0.cyid}}" class="js-sbselect">{{parents.0.dname}}</a>
+			&nbsp;<a href="javascript:void(0)" data-cyid="{{parentMarriage}}" class="js-sbselect">&#9472;&#9679;&#9472;</a>&nbsp;
+			<a href="javascript:void(0)" data-cyid="{{parents.1.cyid}}" class="js-sbselect">{{parents.1.dname}}</a>
+		</div>
+	{% else %}
+		<span>?</span>{% if contrib %} (<a href="javascript:void(0)">přidat</a>){% endif %}
+	{% endif %}
+ 	<table id="person-info">
+		</td></tr>
+{% if children %}
+		<tr><td class="key">Děti:</td><td>
+{% for c in children %}
+<a href="javascript:void(0)" data-cyid="{{c.cyid}}" class="js-sbselect">{{c.dname}}</a>{% if loop.last == false %}, {% endif %}
+{# {% else %}&ndash; #}
+{% endfor %}
+{# {% if contrib %} (<a href="javascript:void(0)">přidat</a> (?)){% endif %} #}
+		</td></tr>
+{% endif %}
+	</table>
+</div>

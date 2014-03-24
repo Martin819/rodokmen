@@ -1,0 +1,17 @@
+<div id="sidebar-marriage" class="sidebar-content">
+	<div id="marriage-h">
+		<h2>{{spouse1}}</h2>
+		<h2 class="marriage-eq">──⬤──</h2>
+		{# <h2 class="marriage-eq">&#9552;&#9552;&#9552;</h2> #}
+		<h2>{{spouse2}}</h2>
+	</div>
+	<div class='hr'></div>
+	<table id="person-info">
+		<tr><td class="key">Děti:</td><td>
+{% for c in children %}
+<a href="javascript:void(0)" data-cyid="{{c.cyid}}" class="js-sbperson">{{c.dname}}</a>{% if loop.last == false %}, {% endif %}
+{% else %}&ndash;{% endfor %}
+{% if contrib %} (<a href="javascript:void(0)">přidat</a>){% endif %}
+		</td></tr>
+	</table>
+</div>

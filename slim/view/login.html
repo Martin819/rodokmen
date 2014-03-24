@@ -1,0 +1,21 @@
+{% include 'header.html' %}
+</head>
+<body>
+{# FIXME: css classes #}
+<div id="login" class="round white">
+	<form action="{{ baseUrl() }}/login" method="post">
+		<label for="username">E-mail:</label>
+		<input type="text" name="rdk_username" id="username" class="in-text focus round-small"/>
+		<label for="password">Heslo:</label>
+		<input type="password" name="rdk_pw" id="password" class="in-text round-small"/>
+		<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+	</form>
+</div>
+<script type="text/javascript">
+	$(document).ready(function()
+	{
+		$('.focus').focus();
+	});
+</script>
+</body>
+</html>
