@@ -20,10 +20,15 @@ class ModelPerson extends \RedBean_SimpleModel
 	public function dispense() { $this->bean->via('relation'); }
 	public function open() { $this->bean->via('relation'); }
 
-	public function displayName()
+	public function name()
 	{
-		// TODO
-		return $this->bean->name;
+		return \array_values($this->bean->xownNameList);
+	}
+
+	public function displayName($sep = ' ')
+	{
+		$n = $this->name()[0];
+		return $n->first.$sep.$n->last;
 	}
 
 	public function parentMarriage()
@@ -63,7 +68,7 @@ class ModelPerson extends \RedBean_SimpleModel
 		return array(
 			'data' => array(
 				'id' => $this->cyId(),
-				'name' => $this->displayName(),
+				'name' => $this->displayName("\n"),
 				'oid' => $this->bean->id),
 			'classes' => 'p'
 		);
@@ -71,14 +76,14 @@ class ModelPerson extends \RedBean_SimpleModel
 
 	public function sidebarData()
 	{
+		$pm = $this->parentMarriage();
+
 		$ret = array(
+			'parentMarriage' => $pm ? $pm->cyId() : '',
+			'parents' => self::listPersons($this->parents()),
+			'children' => self::listPersons($this->children()),
 			'dname' => $this->displayName()
 		);
-
-		$pm = $this->parentMarriage();
-		$ret['parentMarriage'] =  $pm ? $pm->cyId() : '';
-		$ret['parents'] = self::listPersons($this->parents());
-		$ret['children'] = self::listPersons($this->children());
 
 		return $ret;
 	}

@@ -6,11 +6,15 @@
 	<script language="javascript" type="text/javascript" src="rs/cy.layout.rodokmen.js"></script>
 	<script language="javascript" type="text/javascript" src="rs/cy.renderer.raphael.js"></script>
 	<script language="javascript" type="text/javascript" src="rs/rodokmen.js"></script>
-	<title>  TODO  </title>
+	<script language="javascript" type="text/javascript" src="rs/spinner.js"></script>
+	<title>Rodokmen α</title>
 </head>
 <body>
-	<div id="top"></div>
-	<div id="sidebar" class="shadow-top"></div>
+	<div id="spinner"></div>
+	{% include 'menubar.html' %}
+	<div id="sidebar" class="shadow-top">
+		<div id="sidebar-content"></div>
+	</div>
 	<div id="cy" class="shadow-top"></div>
 </body>
 </html>

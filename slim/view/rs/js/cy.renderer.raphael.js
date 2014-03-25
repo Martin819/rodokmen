@@ -45,8 +45,9 @@
 			if (ev.button == 0)
 			{
 				var e = eleFromMouse(ev);
-				if (!options.multiSelect || !ev.shiftKey) cy.nodes(':selected').unselect();
-				if (e && e.selectable()) e.select();
+				var e_sel = e ? "[id != '"+e.id()+"']" : '';
+				if (!options.multiSelect || !ev.shiftKey) cy.nodes(':selected'+e_sel).unselect();
+				if (e && e.selectable() && !e.selected()) e.select();
 			}
 		})
 		.mouseup(function(ev)

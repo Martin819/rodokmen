@@ -21,7 +21,7 @@ class ModelMarriage extends \RedBean_SimpleModel
 	public function spouses()
 	{
 		$ret = $this->bean->withCondition('relation.role = ?', array('parent'))->sharedPersonList;
-		// TODO: order by sex ? (females first)
+		// TODO: order by sex ? (female first)
 		return \array_values($ret);
 	}
 
@@ -49,12 +49,11 @@ class ModelMarriage extends \RedBean_SimpleModel
 	public function sidebarData()
 	{
 		$sp = $this->spouses();
-		$ret = array(
-			'spouse1' => $sp[0]->displayName(),
-			'spouse2' => $sp[1]->displayName()
-		);
 
-		$ret['children'] = ModelPerson::listPersons($this->children());
+		$ret = array(
+			'spouses'  => ModelPerson::listPersons($this->spouses()),
+			'children' => ModelPerson::listPersons($this->children())
+		);
 
 		return $ret;
 	}

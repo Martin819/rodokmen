@@ -3,6 +3,23 @@
 {
 	// How to namespace in JS: http://stackoverflow.com/a/5947280/786102
 
+	var spinner;
+
+	function spinnerOn(element)
+	{
+		if (element)
+		{
+			var p = element.position();
+			var se = spinner.element();
+			se.css('top',  p.top + element.outerHeight()/2);
+			se.css('left', p.left + element.outerWidth()/2);
+			spinner.play();
+		} else
+		{
+			spinner.pause();
+		}
+	}
+
 	function ajaxUrl(url)
 	{
 		return rdkRoot+'/ajax'+url;
@@ -19,14 +36,24 @@
 	{
 		$('a.js-sbselect').click(function(e)
 		{
-			console.log('zde');
 			cy.nodes(':selected').unselect();
 			cy.nodes('#'+$(this).data('cyid')).select();
 		})
 	}
 
+	var sbTimer;
+
 	function loadSidebar(type, id)
 	{
+		clearTimeout(sbTimer);
+
+		var sbLoadTimer = setTimeout(function()
+		{
+			$('#sidebar-content').detach();
+			spinnerOn($('#sidebar'));
+			clearTimeout(sbLoadTimer);
+		}, 750);
+
 		$.get(ajaxUrl('/'+type+'/'+id, '', 'html'))
 		.done(function(data)
 		{
@@ -37,6 +64,11 @@
 		{
 			// FIXME: ajax error
 			console.log('ajax fail:', type+':', textStatus, errorThrown);
+		})
+		.always(function()
+		{
+			clearTimeout(sbLoadTimer);
+			spinnerOn(false);
 		});
 	}
 
@@ -44,10 +76,17 @@
 	{
 		// TODO
 		// TODO: lineage stats (← JS) (?)
+
+		sbTimer = setTimeout(function()
+		{
+			$('#sidebar-content').detach();
+			clearTimeout(sbTimer);
+		}, 100);
 	}
 
 	function loadLineage()
 	{
+		spinnerOn($('#cy'));
 		$.get(ajaxUrl('/lineage'), '', 'json')
 		.done(function(data)
 		{
@@ -55,17 +94,30 @@
 			{
 				this.nodes().ungrabify();
 				bindCyEvents(this);
+				spinnerOn(false);
 			});
 		})
 		.fail(function(jqXHR, textStatus, errorThrown)
 		{
 			// FIXME: ajax error
+			spinnerOn(false);
 			console.log('ajax fail: lineage:', textStatus, errorThrown);
 		});
 	}
 
 	$(document).ready(function()
 	{
+		spinner = new rdk.Spinner($('#spinner'),
+		{
+			size: 80,
+			stroke: 4,
+			color1: '#1173A7',
+			color2: '#1173A7',
+			// color2: '#0091BD',
+			speed: 8000
+		});
+
+
 		$('#cy').cytoscape(
 		{
 			layout: { name: 'rodokmen' },
@@ -85,6 +137,7 @@
 						'background-color': '#006280',
 						'shape': 'roundrectangle',
 						'width': 50,
+						'height': 40,
 						'content': 'data(name)',
 						'text-valign': 'center',
 						'text-outline-width': 0,
@@ -146,5 +199,5 @@
 				// giddy up
 			}
 		});
-});
+	});
 }(window.rdk = window.rdk || {}, jQuery));

@@ -93,13 +93,10 @@ class App extends Slim\Slim
 			'templates.path' => __DIR__.'/../view'
 		));
 
-		// $this->add(new LogMiddleware());
 		$this->log->setWriter(new Logger($this, __DIR__.'/../data/log'));
 
 		$this->setName($name);
 		self::$apps[$name] = $this;
-
-		// TODO: slim.errors
 
 		$this->config = new Config();
 
@@ -107,23 +104,7 @@ class App extends Slim\Slim
 		$this->setup_db();
 		$this->setup_modes();
 
-		// var_dump($this->log);
-
 		$this->usr = User::fromSession();
-
-		// User::setupNew('vk', Role::Contrib, 'pk');
-		// $p = new Person();
-		// $bean = $p->setupNew();
-		// $bean->name = 'Nabla';
-		// \R::store($bean);
-		// $m = new marriage();
-		// $bean = $m->setupNew();
-		// \R::store($bean);
-		// $r = new Relation();
-		// $bp = $p->fromId(5);
-		// $bm = $m->fromId(1);
-		// $br = $r->relate($bp, $bm, 'parent');
-		// \R::store($br);
 	}
 
 	public function __destruct()

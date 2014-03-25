@@ -1,4 +1,4 @@
-<div id="sidebar-person" class="sidebar-content">
+<div id="sidebar-content">
 	<div id="sidebar-media">(todo)</div>
 	<h2>{{dname}}</h2>
 	<div class='hr'></div>
@@ -18,9 +18,7 @@
 		<tr><td class="key">Děti:</td><td>
 {% for c in children %}
 <a href="javascript:void(0)" data-cyid="{{c.cyid}}" class="js-sbselect">{{c.dname}}</a>{% if loop.last == false %}, {% endif %}
-{# {% else %}&ndash; #}
 {% endfor %}
-{# {% if contrib %} (<a href="javascript:void(0)">přidat</a> (?)){% endif %} #}
 		</td></tr>
 {% endif %}
 	</table>

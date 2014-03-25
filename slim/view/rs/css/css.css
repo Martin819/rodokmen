@@ -12,23 +12,33 @@ body
 }
 
 
-/*** Layout ***/
+/*** Layout & Visuals ***/
 
-#top
+#menubar
 {
 	color: #fff;
 	background-color: #000;
-	background-image: url('logo-text.png');
-	background-repeat: no-repeat;
-	background-position: 4px 4px;
+	background-image: url('stressed-linen-d.png');
+	background-position: 0px 30px;
 	width: 100%;
 	height: 30px;
 	vertical-align: text-bottom;
 }
 
+#menubar #logo
+{
+	display: inline-block;
+	background-image: url('logo-text.png');
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+	width: 200px;
+	height: 100%;
+}
+
 #cy
 {
 	background-color: #1a1a1a;
+	background-image: url('stressed-linen.png');
 	position: absolute;
 	top: 30px;
 	left: 0;
@@ -47,17 +57,13 @@ body
 	bottom: 0;
 	width: 330px;
 	padding: 10px;
-}
-
-.sidebar-content
-{
-	height: 100%;
 	overflow: auto;
 }
 
 #sidebar h2
 {
 	display: inline-block;
+	color: #004266;
 	font-size: 20px;
 	text-align: center;
 	width: 100%;
@@ -78,7 +84,7 @@ body
 	color: #fff;
 	background-color: #1a1a1a;
 	width: 100%;
-	height: 40%;
+	height: 150px;
 	margin-bottom: 15px;
 	overflow: auto;
 }
@@ -107,6 +113,17 @@ body
 	width: 100px;
 }
 
+#sidebar a:link, #sidebar a:visited
+{
+	color: #004266;
+	text-decoration: none;
+}
+
+#sidebar a:hover, #sidebar a:active
+{
+	color: #1173A7;
+}
+
 
 /*** Utils ***/
 
@@ -132,4 +149,16 @@ body
 	-webkit-box-shadow: inset 0px 4px 10px 0px rgba(0,0,0,0.7);
 	-moz-box-shadow: inset 0px 4px 10px 0px rgba(0,0,0,0.7);
 	box-shadow: inset 0px 4px 10px 0px rgba(0,0,0,0.7);
+}
+
+#spinner
+{
+	/*border: 1px solid red;*/
+	position: absolute;
+	width: 90px;
+	height: 90px;
+	margin: -45px 0 0 -45px;
+	/*top: 40%;*/
+	/*left: 40%;*/
+	z-index: 1;
 }
