@@ -1,0 +1,27 @@
+<form action="{{action}}" method="post" class="vex-dialog-form">
+	<input type="hidden" name="rdk_id" value="{{id}}" />
+	<div class="vex-dialog-input">
+		<div class="vex-input-field">
+			<label for="rdk_p1_firstname">Jméno</label>
+			<input type="text" name="rdk_p1_firstname" class="vex-dialog-input focus" value="{{name.first}}" />
+		</div>
+		<div class="vex-input-field">
+			<label for="rdk_p1_lastname">Příjmení</label>
+			<input type="text" name="rdk_p1_lastname" class="vex-dialog-input" value="{{name.last}}" />
+		</div>
+		<p></p>
+		<div class="vex-input-field">
+			<label for="rdk_p2_firstname">Jméno</label>
+			<input type="text" name="rdk_p2_firstname" class="vex-dialog-input" value="{{name.first}}" />
+		</div>
+		<div class="vex-input-field">
+			<label for="rdk_p2_lastname">Příjmení</label>
+			<input type="text" name="rdk_p2_lastname" class="vex-dialog-input" value="{{name.last}}" />
+		</div>
+		<p>Ostatní údaje...</p>
+	</div>
+	<div class="vex-dialog-buttons">
+		<input type="submit" value="Uložit" class="js-formsubmit vex-dialog-button-primary vex-dialog-button" />
+		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+	</div>
+</form>

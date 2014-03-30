@@ -32,6 +32,12 @@ abstract class Db
 		R::addDatabase(self::data, $dbData);
 	}
 
+	static public function transaction($dbname, $function)
+	{
+		self::select($dbname);
+		R::transaction($function);
+	}
+
 	static public function close() { R::close(); }
 
 	static public function select($db) { R::selectDatabase($db); }

@@ -1,25 +1,54 @@
+{% spaceless %}
 <div id="sidebar-content">
-	<div id="sidebar-media">(todo)</div>
-	<h2>{{dname}}</h2>
-	<div class='hr'></div>
-	<h3>Rodiče:</h3>
-	{% if parents %}
-		<div id="parents">
-			<a href="javascript:void(0)" data-cyid="{{parents.0.cyid}}" class="js-sbselect">{{parents.0.dname}}</a>
-			&nbsp;<a href="javascript:void(0)" data-cyid="{{parentMarriage}}" class="js-sbselect">&#9472;&#9679;&#9472;</a>&nbsp;
-			<a href="javascript:void(0)" data-cyid="{{parents.1.cyid}}" class="js-sbselect">{{parents.1.dname}}</a>
-		</div>
-	{% else %}
-		<span>?</span>{% if contrib %} (<a href="javascript:void(0)">přidat</a>){% endif %}
-	{% endif %}
- 	<table id="person-info">
-		</td></tr>
-{% if children %}
-		<tr><td class="key">Děti:</td><td>
-{% for c in children %}
-<a href="javascript:void(0)" data-cyid="{{c.cyid}}" class="js-sbselect">{{c.dname}}</a>{% if loop.last == false %}, {% endif %}
-{% endfor %}
-		</td></tr>
-{% endif %}
-	</table>
+	<div id="sidebar-media"></div>
+	<h2>{{p.dname}}</h2>
+	<div class="hr"></div>
+		{% if contrib %}
+			<div class="center">
+				<a href="{{urlFor('person-edit', {'id': p.id})}}" class="js-openform button" data-title="Upravit údaje">upravit údaje</a>
+				<a href="{{ajs}}" class="button">smazat</a>
+			</div>
+		{% endif %}
+		<ul>
+			<li>
+				<h3>Rodiče:</h3>
+				{% if parents %}
+					<div id="parents">
+						<a href="{{ajs}}" data-cyid="{{parents.0.cyid}}" class="js-sbselect">{{parents.0.dname}}</a>
+						&nbsp;<a href="{{ajs}}" data-cyid="{{parentMarriage}}" class="js-sbselect">&#9472;&#9679;&#9472;</a>&nbsp;
+						<a href="{{ajs}}" data-cyid="{{parents.1.cyid}}" class="js-sbselect">{{parents.1.dname}}</a>
+					</div>
+				{% else %}
+					<span>?</span>
+					{% if contrib %}
+						<span class="right">
+							<a href="{{urlFor('marriage-new-forchild', {'id': p.id})}}" class="js-openform button" data-title="Přidat rodiče">přidat</a>
+						</span>
+					{% endif %}
+				{% endif %}
+			</li>
+			<li>
+				<h3>Svazky:</h3>
+				{% if contrib %}
+					<span class="right">
+						<a href="{{urlFor('marriage-new-withperson', {'id': p.id})}}" class="js-openform button" data-title="Přidat...">přidat</a>
+					</span>
+				{% endif %}
+				{% for m in marriages %}
+					<div>
+							<a href="{{ajs}}" data-cyid="{{m.cyid}}" class="js-sbselect">&#9472;&#9679;&#9472;</a>&nbsp;
+							<a href="{{ajs}}" data-cyid="{{m.spouse.cyid}}" class="js-sbselect">{{m.spouse.dname}}</a>
+					</div>
+					{% if m.children %}
+					<div class="children">
+						&nbsp;&nbsp;&nbsp;&#8627;&nbsp;
+						{% for c in m.children %}
+							<span class="comma"><a href="{{ajs}}" data-cyid="{{c.cyid}}" class="js-sbselect">{{c.dname}}</a></span>
+						{% endfor %}
+					</div>
+					{% endif %}
+				{% endfor %}
+			</li>
+		</ul>
 </div>
+{% endspaceless %}

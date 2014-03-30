@@ -9,20 +9,30 @@
 	{
 		if (element)
 		{
-			var p = element.position();
 			var se = spinner.element();
-			se.css('top',  p.top + element.outerHeight()/2);
-			se.css('left', p.left + element.outerWidth()/2);
+			se.appendTo(element);
+			se.css('top',  element.outerHeight()/2);
+			se.css('left', element.outerWidth()/2);
 			spinner.play();
 		} else
 		{
+			spinner.element().appendTo($('body'));
 			spinner.pause();
 		}
 	}
 
 	function ajaxUrl(url)
 	{
-		return rdkRoot+'/ajax'+url;
+		return rdk.baseUrl+'/ajax'+url;
+	}
+
+	function ajaxError(method)
+	{
+		if (method != 'post') method = 'get';
+		return function(jqXHR, textStatus, errorThrown)
+		{
+			vex.dialog.alert(rdk.strings.ajaxErrMsg[method]);
+		}
 	}
 
 	function bindCyEvents(cy)
@@ -34,11 +44,82 @@
 
 	function bindSbEvents()
 	{
-		$('a.js-sbselect').click(function(e)
+		$('#sidebar')
+		.on('click', 'a.js-sbselect', function(e)
 		{
 			cy.nodes(':selected').unselect();
 			cy.nodes('#'+$(this).data('cyid')).select();
 		})
+		.on('click', '.js-openform', function(e)
+		{
+			e.preventDefault();
+			openForm($(this).data('title'), $(this).attr('href'));
+		});
+
+		$(document)
+		.on('click', '.js-formsubmit', function(e)
+		{
+			e.preventDefault();
+			var $t = $(this);
+			submitForm($t.closest('.vex'), $t.closest('form'));
+		})
+		.on('click', '.js-formcancel', function(e)
+		{
+			vex.close($(this).closest('.vex').data('vex').id);
+		});
+	}
+
+	function openForm(heading, url)
+	{
+		vex.open(
+		{
+			content: '<h2>'+heading+'</h2><div class="hr"></div>',
+			css: { padding: '50px 0' },  // TODO: move css (?)
+			contentCSS:
+			{
+				position: 'absolute',
+				top: '50px',
+				bottom: '50px',
+				left: '20%'
+			},
+			afterOpen: function($vexContent) { loadForm(url, $vexContent); },
+			afterClose: function() {}
+		});
+	}
+
+	function loadForm(url, $vexContent)
+	{
+		spinnerOn($vexContent);
+		$.get(url, '', 'html')
+		.done(function(data)
+		{
+			$vexContent.append(data);
+			$('.vex .focus').focus();
+		})
+		.fail(ajaxError())
+		.always(function() { spinnerOn(false); });
+	}
+
+	function submitForm($vex, $form)
+	{
+		// TODO: select new element after form delivered, if any
+
+		var url = $form.attr('action');
+		var data = $form.serialize();
+		var vexD = $vex.data('vex');
+
+		$form.hide();
+		spinnerOn($vex);
+
+		$.post(url, data)
+		.fail(ajaxError('post'))
+		.always(function()
+		{
+			spinnerOn(false);
+			cy.elements().remove();
+			vexD.afterClose = function() { loadLineage(); }
+			vex.close(vexD.id);
+		});
 	}
 
 	var sbTimer;
@@ -55,16 +136,8 @@
 		}, 750);
 
 		$.get(ajaxUrl('/'+type+'/'+id, '', 'html'))
-		.done(function(data)
-		{
-			$('#sidebar').html(data);
-			bindSbEvents();
-		})
-		.fail(function(jqXHR, textStatus, errorThrown)
-		{
-			// FIXME: ajax error
-			console.log('ajax fail:', type+':', textStatus, errorThrown);
-		})
+		.done(function(data) { $('#sidebar').html(data); })
+		.fail(ajaxError())
 		.always(function()
 		{
 			clearTimeout(sbLoadTimer);
@@ -87,6 +160,7 @@
 	function loadLineage()
 	{
 		spinnerOn($('#cy'));
+
 		$.get(ajaxUrl('/lineage'), '', 'json')
 		.done(function(data)
 		{
@@ -97,27 +171,28 @@
 				spinnerOn(false);
 			});
 		})
-		.fail(function(jqXHR, textStatus, errorThrown)
-		{
-			// FIXME: ajax error
-			spinnerOn(false);
-			console.log('ajax fail: lineage:', textStatus, errorThrown);
-		});
+		.fail(ajaxError());
 	}
 
 	$(document).ready(function()
 	{
+		// jQuery
+		$.ajaxSetup({ timeout: 20000 });
+
+		// Loading spinner
 		spinner = new rdk.Spinner($('#spinner'),
 		{
 			size: 80,
 			stroke: 4,
 			color1: '#1173A7',
 			color2: '#1173A7',
-			// color2: '#0091BD',
 			speed: 8000
 		});
 
+		// Bind evets
+		bindSbEvents();
 
+		// Cytoscape
 		$('#cy').cytoscape(
 		{
 			layout: { name: 'rodokmen' },

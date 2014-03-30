@@ -2,10 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="Content-Language" content="cs" /> <?php /* FIXME: language */ ?>
+{#  FIXME: language  #}
+	<meta http-equiv="Content-Language" content="cs" />
 	<meta name="language" content="cs" />
-	<link href="rs/css.css" rel="stylesheet" type="text/css" media="screen" />
+	<title>Rodokmen α</title>
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/main.css" />
 	<script language="javascript" type="text/javascript" src="rs/lib/jquery.min.js"></script>
 	<script language="javascript" type="text/javascript">
-		window.rdkRoot = '{{ baseUrl() }}';
+		(function(rdk, $, undefined)
+		{
+			rdk.baseUrl = '{{ baseUrl() }}';
+			rdk.strings =
+			{
+				ajaxErrMsg: { get: 'Chyba při načítání dat', post: 'Chyba při odesílání dat' }
+			};
+		}(window.rdk = window.rdk || {}, jQuery));
 	</script>
+	{% include 'jsstrings.html' %}

@@ -21,7 +21,7 @@ class Pod
 		DB::select($this->db);
 	}
 
-	protected function store($bean)
+	public function store($bean)
 	{
 		$this->dbSelect();
 		R::store($bean);

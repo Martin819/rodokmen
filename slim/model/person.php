@@ -10,24 +10,53 @@ class Person extends Pod
 
 class ModelPerson extends \RedBean_SimpleModel
 {
-	public static function listPersons($persons)
+	private $_name_new;
+
+	public static function makeLinks($persons)
 	{
 		$ret = array();
-		foreach ($persons as $p) $ret[] = array('dname' => $p->displayName(), 'cyid' => $p->cyId());
+		foreach ($persons as $p) $ret[] = $p->linkData();
 		return $ret;
 	}
 
-	public function dispense() { $this->bean->via('relation'); }
+	public function dispense()
+	{
+		$this->_name_new = R::dispense('name');
+		$this->bean->via('relation');
+	}
+
 	public function open() { $this->bean->via('relation'); }
 
-	public function name()
+	public function names()
 	{
+		/* Names TODO:
+		 * Names are going to need some serious thought & design. What might be needed:
+		 * 1. Past names (incl. birth name, arbitrary number of marriages, etc.)
+		 * 2. Middle names
+		 * 3. Godfather?
+		 */
+
 		return \array_values($this->bean->xownNameList);
+	}
+
+	public function setNames($first, $last)
+	{
+		// For now, only one name is supported
+		if (count($this->bean->xownNameList) == 0)
+		{
+			$name = $this->_name_new;
+			$this->bean->xownNameList[] = $name;
+		} else
+		{
+			$name = \reset($this->bean->xownNameList);
+		}
+		$name->first = $first;
+		$name->last  = $last;
 	}
 
 	public function displayName($sep = ' ')
 	{
-		$n = $this->name()[0];
+		$n = $this->names()[0];
 		return $n->first.$sep.$n->last;
 	}
 
@@ -74,17 +103,58 @@ class ModelPerson extends \RedBean_SimpleModel
 		);
 	}
 
+	public function linkData()
+	{
+		return array('dname' => $this->displayName(), 'cyid' => $this->cyId());
+	}
+
+	public function infoData()
+	{
+		$names = $this->names();
+		$name = array(
+			'first' => $names[0]->first,
+			'last' => $names[0]->last
+		);
+
+		$ret = array(
+			'id' => $this->bean->id,
+			'dname' => $this->displayName(),
+			'name' => $name
+		);
+
+		return $ret;
+	}
+
 	public function sidebarData()
 	{
 		$pm = $this->parentMarriage();
 
 		$ret = array(
+			'p' => $this->infoData(),
 			'parentMarriage' => $pm ? $pm->cyId() : '',
-			'parents' => self::listPersons($this->parents()),
-			'children' => self::listPersons($this->children()),
-			'dname' => $this->displayName()
+			'parents' => self::makeLinks($this->parents()),
+			'children' => self::makeLinks($this->children())
 		);
 
+		$ret['marriages'] = array();
+		$ms = $this->marriages();
+		foreach ($ms as $m)
+		{
+			$ret['marriages'][] = array(
+				'cyid' => $m->cyId(),
+				'spouse' => $m->spouseTo($this->bean)->linkData(),
+				'children' => self::makeLinks($m->children())
+			);
+		}
+
 		return $ret;
+	}
+
+	public function edit($rq)
+	{
+		// TODO: log
+		$bean = $this->bean;
+
+		$this->setNames($rq->post('rdk_firstname'), $rq->post('rdk_lastname'));
 	}
 }

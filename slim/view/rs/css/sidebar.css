@@ -1,0 +1,94 @@
+
+.sidebar-header
+{
+	color: #004266;
+	font-size: 20px;
+}
+
+#sidebar h2
+{
+	display: inline-block;
+	color: #004266;
+	font-size: 20px;
+	text-align: center;
+	width: 100%;
+}
+
+#sidebar #marriage-h
+{
+	margin: 10px 0;
+}
+
+#sidebar h2.marriage-eq
+{
+	color: #dddddd;
+	font-size: .9em;
+	margin: 4px 0;
+}
+
+#sidebar-media
+{
+	color: #fff;
+	background-color: #1a1a1a;
+	width: 100%;
+	height: 150px;
+	margin-bottom: 10px;
+	overflow: auto;
+}
+
+#sidebar ul
+{
+	list-style-type: none;
+	width: 100%;
+	padding: 0;
+	margin: 3px 0;
+}
+
+#sidebar ul h3
+{
+	display: inline-block;
+	width: 100px;
+	font-size: inherit;
+	margin: 5px 0;
+}
+
+#sidebar ul div
+{
+	padding-left: 30px;
+ 	margin-bottom: 3px;
+}
+
+#sidebar ul #parents
+{
+	text-align: center;
+ 	padding: 0;
+}
+
+#sidebar a:link, #sidebar a:visited
+{
+	color: #004266;
+	text-decoration: none;
+}
+
+#sidebar a:hover, #sidebar a:active
+{
+	color: #1173A7;
+}
+
+#sidebar a.button
+{
+	display: inline-block;
+	color: #004266;
+	border: 1px solid #004266;
+	border-radius: 5px;
+	font-size: .9em;
+	/*font-weight: bold;*/
+	padding: 1px .5em;
+	margin: 3px;
+}
+
+#sidebar a.button:hover
+{
+	color: #1173A7;
+	border-color: #1173A7;
+}

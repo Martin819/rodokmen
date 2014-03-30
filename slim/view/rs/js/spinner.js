@@ -31,22 +31,17 @@
 		this.c2.attr('stroke', opts.color2);
 		this.c2.attr('stroke-width', opts.stroke);
 		this.c2.attr('stroke-dasharray', opts.pattern2);
-
-		this.spin1 = Raphael.animation({'transform': 'R360'}, opts.speed).repeat(Infinity);
-		this.c1.animate(this.spin1);
-		this.c1.pause(this.spin1);
-
-		this.spin2 = Raphael.animation({'transform': 'R360'}, .71*opts.speed).repeat(Infinity);
-		this.c2.animate(this.spin2);
-		this.c2.pause(this.spin2);
 	}
 
 	rdk.Spinner.prototype.play = function()
 	{
 		this.ele.show();
-		this.c1.attr({'transform': 'R0'});
-		this.c2.attr({'transform': 'R0'});
+		var R = Math.floor(Math.random()*360);
+		this.c1.attr({'transform': 'R'+R});
+		this.c2.attr({'transform': 'R'+R});
+		this.spin1 = Raphael.animation({'transform': 'R'+R+'r360'}, this.options.speed).repeat(Infinity);
 		this.c1.animate(this.spin1);
+		this.spin2 = Raphael.animation({'transform': 'R'+R+'r360'}, .71*this.options.speed).repeat(Infinity);
 		this.c2.animate(this.spin2);
 	}
 

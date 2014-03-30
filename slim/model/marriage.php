@@ -18,6 +18,12 @@ class ModelMarriage extends \RedBean_SimpleModel
 		// FIXME: check count(parents) is 2
 	}
 
+	public function spouseTo($to)
+	{
+		$s = $this->spouses();
+		return $s[0]->id != $to->id ? $s[0] : $s[1];
+	}
+
 	public function spouses()
 	{
 		$ret = $this->bean->withCondition('relation.role = ?', array('parent'))->sharedPersonList;
@@ -46,13 +52,17 @@ class ModelMarriage extends \RedBean_SimpleModel
 		);
 	}
 
+	public function infoData()
+	{
+		return array( 'id' => $this->bean->id );
+	}
+
 	public function sidebarData()
 	{
-		$sp = $this->spouses();
-
 		$ret = array(
-			'spouses'  => ModelPerson::listPersons($this->spouses()),
-			'children' => ModelPerson::listPersons($this->children())
+			'm' => $this->infoData(),
+			'spouses'  => ModelPerson::makeLinks($this->spouses()),
+			'children' => ModelPerson::makeLinks($this->children())
 		);
 
 		return $ret;

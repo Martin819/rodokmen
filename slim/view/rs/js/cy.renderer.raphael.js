@@ -140,6 +140,7 @@
 			this.bindEvents();
 		}
 
+		d.rEles = d.paper.set();
 		d.fitLabels = this.options.fitLabels;
 
 		this.addEles(eles);
@@ -230,7 +231,7 @@
 			return [['M', ps.x, ps.y], ['C', ps.x, ay, pt.x, by, pt.x, pt.y]];
 		} else
 		{
-			// Haystack style edge (asumed)
+			// Haystack style edge (assumed)
 			return [['M', ps.x, ps.y], ['L', pt.x, pt.y]];
 		}
 	}
@@ -250,7 +251,7 @@
 		return re;
 	}
 
-	RaphaelRenderer.prototype.addEles = function(eles, updateMappers)
+	RaphaelRenderer.prototype.addEles = function(eles)
 	{
 		var self = this;
 
@@ -258,6 +259,22 @@
 		eles.edges().each(function(i, edge) { self.makeEdge(edge); });
 
 		this.updateStyle(eles);
+	}
+
+	RaphaelRenderer.prototype.removeEles = function(eles)
+	{
+		var paper = this.data.paper;
+
+		eles.nodes().each(function(i, node)
+		{
+			var scratch = node.rscratch('raphael');
+			paper.getById(scratch.nodeId).remove();
+			paper.getById(scratch.labelId).remove();
+		})
+		eles.edges().each(function(i, edge)
+		{
+			paper.getById(edge.rscratch('raphael').edgeId).remove();
+		});
 	}
 
 	RaphaelRenderer.prototype.updateViewport = function()
@@ -363,12 +380,13 @@
 			case 'load':
 				this.init(params.collection);
 				this.updateViewport();
-				this.data.fitLabels = false;
 				break;
 
 			case 'add':
+				this.addEles(params.collection);
+
 			case 'remove':
-				// TODO
+				this.removeEles(params.collection);
 				break;
 
 			case 'position':
