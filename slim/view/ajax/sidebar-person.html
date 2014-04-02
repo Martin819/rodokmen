@@ -6,7 +6,7 @@
 		{% if contrib %}
 			<div class="center">
 				<a href="{{urlFor('person-edit', {'id': p.id})}}" class="js-openform button" data-title="Upravit údaje">upravit údaje</a>
-				<a href="{{ajs}}" class="button">smazat</a>
+				<a href="{{urlFor('person-delete', {'id': p.id})}}" class="js-openform button" data-title="Smazat">smazat</a>
 			</div>
 		{% endif %}
 		<ul>

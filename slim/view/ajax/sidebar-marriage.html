@@ -10,7 +10,7 @@
 	{% if contrib %}
 		<div class="center">
 			<a href="{{ajs}}" class="button">upravit údaje</a>
-			<a href="{{ajs}}" class="button">smazat</a>
+			<a href="{{urlFor('marriage-delete', {'id': m.id})}}" class="js-openform button" data-title="Smazat">smazat</a>
 		</div>
 	{% endif %}
 	<ul>

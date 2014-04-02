@@ -148,6 +148,12 @@
 	color: #777777;
 }
 
+.vex.vex-theme-plain .vex-dialog-button.vex-dialog-button-danger
+{
+	background-color: #b30000;
+	color: white;
+}
+
 .vex-loading-spinner.vex-theme-plain
 {
 	height: 2.5em;

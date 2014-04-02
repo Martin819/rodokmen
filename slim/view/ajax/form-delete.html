@@ -1,0 +1,24 @@
+{% if todelete %}
+<form action="{{action}}" method="post" class="vex-dialog-form">
+	<input type="hidden" name="rdk_id" value="{{id}}" />
+	<div>
+		Budou smazány záznamy o těchto lidech:
+		<ul>
+			{% for p in todelete %}
+				<li>{{p.dname}}</li>
+			{% endfor %}
+		</ul>
+		Toto nelze vzít zpět. Pokračovat?
+	</div>
+	<div class="vex-dialog-buttons">
+		<input type="submit" value="Pokračovat" class="focus js-formsubmit vex-dialog-button-danger vex-dialog-button" />
+		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+	</div>
+</form>
+{% else %}
+	<p>Nelze smazat!</p>
+	<small>Tento člověk nebo svazek nemůže být smazán, protože má příliš mnoho propojení se zbytkem stromu.</small> {# FIXME #}
+	<div class="vex-dialog-buttons">
+		<input type="button" value="Ok" class="focus js-formcancel vex-dialog-button-primary vex-dialog-button" />
+	</div>
+{% endif %}

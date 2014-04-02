@@ -1,5 +1,6 @@
 <?php
 namespace Rodokmen;
+use \R;
 
 
 class RouterMain
@@ -39,7 +40,7 @@ class RouterMain
 	{
 		return function()
 		{
-			// TODO: if production, halt if not ajax request (is this needed? probably not, the header can be spoofed anyway)
+			// TODO: if production, halt if not ajax request
 			// NOTE: needed to prevent non-ajax form submit
 		};
 	}
@@ -137,7 +138,31 @@ class RouterMain
 				$bean = self::get_bean($rq->post('rdk_id'), $person, $app);
 				$bean->edit($rq);
 				$person->store($bean);
+				// FIXME: log
 			})->name('person-edit-p');
+
+			// Delete a person:
+			$app->get('/person/delete/:id', $this->authRole(Role::AllContrib), function($id) use ($app)
+			{
+				$bean = self::get_bean($id, new Person(), $app);
+				$app->view->setData(array(
+					'id' => $id,
+					'todelete' => $bean->canBeDeleted(),
+					'action' => $app->urlFor('person-delete-p')
+				));
+				$app->render('ajax/form-delete.html');
+			})->name('person-delete');
+			$app->post('/person/delete', $this->authRole(Role::AllContrib), function() use ($app)
+			{
+				$p = self::get_bean($app->request->post('rdk_id'), new Person(), $app);
+				$delbeans = $p->deleteBeans();
+				if (empty($delbeans)) $app->halt(403);
+				else DB::transaction(DB::data, function() use ($delbeans)
+				{
+					R::trashAll($delbeans);
+					// FIXME: log
+				});
+			})->name('person-delete-p');
 
 
 			// Marriage details for sidebar
@@ -174,6 +199,8 @@ class RouterMain
 
 					$pod_p->store($p);
 					$pod_r->store($r);
+
+					// FIXME: log
 				});
 			})->name('marriage-newchild-p');
 
@@ -186,6 +213,7 @@ class RouterMain
 			})->name('marriage-new-withperson');
 			$app->post('/marriage/new/withperson', $this->authRole(Role::AllContrib), function() use ($app)
 			{
+				// FIXME: log
 				DB::transaction(DB::data, function() use ($app)
 				{
 					$rq = $app->request;
@@ -204,6 +232,8 @@ class RouterMain
 					$pod_m->store($m);
 					$pod_r->store($r1);
 					$pod_r->store($r2);
+
+					// FIXME: log
 				});
 			})->name('marriage-new-withperson-p');
 
@@ -241,9 +271,33 @@ class RouterMain
 					$pod_r->store($rp1);
 					$pod_r->store($rp2);
 					$pod_r->store($rc);
+
+					// FIXME: log
 				});
 			})->name('marriage-new-forchild-p');
 
+			// Delete a marriage:
+			$app->get('/marriage/delete/:id', $this->authRole(Role::AllContrib), function($id) use ($app)
+			{
+				$bean = self::get_bean($id, new Marriage(), $app);
+				$app->view->setData(array(
+					'id' => $id,
+					'todelete' => $bean->canBeDeleted(),
+					'action' => $app->urlFor('marriage-delete-p')
+				));
+				$app->render('ajax/form-delete.html');
+			})->name('marriage-delete');
+			$app->post('/marriage/delete', $this->authRole(Role::AllContrib), function() use ($app)
+			{
+				$m = self::get_bean($app->request->post('rdk_id'), new Marriage(), $app);
+				$delbeans = $m->deleteBeans();
+				if (empty($delbeans)) $app->halt(403);
+				else DB::transaction(DB::data, function() use ($delbeans)
+				{
+					R::trashAll($delbeans);
+					// FIXME: log
+				});
+			})->name('marriage-delete-p');
 		});
 	}
 

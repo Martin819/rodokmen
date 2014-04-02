@@ -39,7 +39,7 @@
 	{
 		cy.nodes('.p').on('select', function(ev) { loadSidebar('person',   ev.cyTarget[0].data().oid); });
 		cy.nodes('.m').on('select', function(ev) { loadSidebar('marriage', ev.cyTarget[0].data().oid); });
-		cy.nodes().on('unselect', function(ev) { sidebarClear(); });
+		cy.nodes().on('unselect', function(ev) { clearSidebar(); });
 	}
 
 	function bindSbEvents()
@@ -145,11 +145,8 @@
 		});
 	}
 
-	function sidebarClear()
+	function clearSidebar()
 	{
-		// TODO
-		// TODO: lineage stats (← JS) (?)
-
 		sbTimer = setTimeout(function()
 		{
 			$('#sidebar-content').detach();
@@ -169,6 +166,7 @@
 				this.nodes().ungrabify();
 				bindCyEvents(this);
 				spinnerOn(false);
+				// TODO: lineage stats → sidebar (?)
 			});
 		})
 		.fail(ajaxError());
