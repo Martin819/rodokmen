@@ -124,6 +124,7 @@ class ModelMarriage extends \RedBean_SimpleModel
 
 		$ret = array();
 		foreach ($along as $p) $ret = array_merge($ret, $p->ownBeans());
+		$ret = array_merge($ret, $this->relations());
 		$ret[] = $this->bean;
 		return $ret;
 	}
