@@ -69,7 +69,8 @@ class RouterMain
 
 		// Global settings:
 
-		$app->view->setData('root', $app->request->getRootUri());  // FIXME: needed?
+		// $app->view->setData('root', $app->request->getRootUri());  // FIXME: needed?
+		$app->view->setData('username', $app->user()->username());
 		$app->view->setData('contrib', $app->user()->roleMatches(Role::AllContrib));
 		$app->view->setData('ajs', 'javascript:void(0)');
 		header_remove('X-Powered-By');
@@ -101,6 +102,12 @@ class RouterMain
 			else
 				echo 'login error';  // FIXME: flash error, redirect back
 		});
+
+		$app->get('/logout', function() use ($app)
+		{
+			$app->user()->logout();
+			$app->redirect($app->urlFor('login'));
+		})->name('logout');
 
 
 		// Ajax routes:

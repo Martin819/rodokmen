@@ -21,24 +21,50 @@ h2
 
 #menubar
 {
+	display: table;
 	color: #fff;
 	background-color: #000;
 	background-image: url('stressed-linen-d.png');
 	background-position: 0px 30px;
 	width: 100%;
 	height: 30px;
-	vertical-align: text-bottom;
 }
 
-#menubar #logo
+#menubar .menublock
 {
-	display: inline-block;
+	display: table-cell;
+	font-weight: bold;
+	height: 30px;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+#menubar #menu
+{
 	background-image: url('logo-text.png');
 	background-repeat: no-repeat;
 	background-position: 5px 5px;
-	width: 200px;
-	height: 100%;
+	text-align: center;
+	padding-left: 200px;
+	padding-right: 5%;
 }
+
+#menubar #user
+{
+	text-align: right;
+	width: 1%;            /* CSS Hack: nowrap will make this as wide as necessary */
+	padding-right: 20px;
+}
+
+#menubar .menuitem
+{
+	display: inline-block;
+	border-left: 1px solid #5F5F5F;
+	padding-left: 8px;
+	margin-left: 8px;
+}
+#menubar .menuitem:first-child { border: none; }
+
 
 #cy
 {
