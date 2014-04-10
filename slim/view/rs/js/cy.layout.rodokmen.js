@@ -21,7 +21,7 @@
 		{
 			return !this.neighborhood("edge[source='"+this.id()+"']").empty();
 		},
-		rdk: function(data)
+		rod: function(data)
 		{
 			if (this._private.scratch.RodokmenLayout === void 0) this._private.scratch.RodokmenLayout = {};
 			if (data === void 0) return this._private.scratch.RodokmenLayout;
@@ -29,7 +29,7 @@
 		},
 		pathWidth: function()
 		{
-			return this.isM() ? this.rdk().mpath_w : this.width();
+			return this.isM() ? this.rod().mpath_w : this.width();
 		}
 	});
 	//
@@ -96,7 +96,6 @@
 			raphael.notify({ type: 'load', collection: cy.elements() });
 		}
 
-		// FIXME: m.rdk()
 		// FIXME: outerWidth (?)
 
 
@@ -118,12 +117,12 @@
 		function scan_mpath(m, pstack)
 		{
 			var w = m.width();
-			var gen = m.rdk().gen;
-			var x = m.rdk().x;
+			var gen = m.rod().gen;
+			var x = m.rod().x;
 
-			m.rdk({ mark_mpath: true, mpath: [], mpath_p: [], mpath_c: [] });
+			m.rod({ mark_mpath: true, mpath: [], mpath_p: [], mpath_c: [] });
 
-			// mpath rdk vars:
+			// mpath rod vars:
 			// mpath:   members of mpath
 			// mpath_m: position of main m in mpath
 			// mpath_p: all parent nodes
@@ -133,11 +132,11 @@
 			function scan_dir(node) // scans is one direction from m
 			{
 				var node_next;
-				for (; !node.rdk().mark_mpath; node = node_next)
+				for (; !node.rod().mark_mpath; node = node_next)
 				{
-					node.rdk().mark_mpath = true;
+					node.rod().mark_mpath = true;
 					node_next = node;  //ie. by default scanning ends in the next iteration
-					m.rdk().mpath.push(node);
+					m.rod().mpath.push(node);
 					add_height(node, gen);
 
 					if (node.isM())
@@ -145,14 +144,14 @@
 						node.nodesFrom().each(function(i, ele)
 						{
 							// There are only two nodesFrom. Pick the unvisited one:
-							if (!ele.rdk().mark_mpath) node_next = ele;
+							if (!ele.rod().mark_mpath) node_next = ele;
 						});
 						node.nodesTo().each(function(i, ele)
 						{
 							// Add each child to mpath children:
-							m.rdk().mpath_c.push(ele);
+							m.rod().mpath_c.push(ele);
 							// Push each child onto the pstack (parent stack):
-							ele.rdk().gen = gen + 1;
+							ele.rod().gen = gen + 1;
 							pstack.push(ele);
 						});
 					} else
@@ -163,7 +162,7 @@
 							if (!next_found)
 							{
 								// First find an m to continue mpath (if any)
-								if (!ele.rdk().mark_mpath)
+								if (!ele.rod().mark_mpath)
 								{
 									node_next = ele;
 									next_found = true;
@@ -171,7 +170,7 @@
 							} else
 							{
 								// Then push all the other m's (branches) onto pstack, they will become seperate mpaths (if any)
-								ele.rdk().gen = gen;
+								ele.rod().gen = gen;
 								pstack.push(ele);
 							}
 						});
@@ -179,33 +178,33 @@
 						if (parent)
 						{
 							// Add parent to mpath parents:
-							m.rdk().mpath_p.push(parent);
+							m.rod().mpath_p.push(parent);
 							// Push parent onto pstack:
-							parent.rdk().gen = gen - 1;
+							parent.rod().gen = gen - 1;
 							pstack.push(parent);
 						}
 					}
 
-					node.rdk({ gen: gen, x: x });
+					node.rod({ gen: gen, x: x });
 					w += mdist + node.width();
 				}
 			}
 
 			var nodesFrom = m.nodesFrom();
 			scan_dir(nodesFrom[0]);  // scan to the left of m
-			m.rdk().mpath.reverse(); // the leftmost member needs to be on index 0
-			m.rdk().mpath.push(m);   // add self in between
-			m.rdk().mpath_m = m.rdk().mpath.length;
+			m.rod().mpath.reverse(); // the leftmost member needs to be on index 0
+			m.rod().mpath.push(m);   // add self in between
+			m.rod().mpath_m = m.rod().mpath.length;
 			scan_dir(nodesFrom[1]);  // scan to the right of m
 
-			m.rdk().mpath_w = w;
+			m.rod().mpath_w = w;
 
 			m.nodesTo().each(function(i, ele)
 			{
 				// Add each child to mpath children:
-				m.rdk().mpath_c.push(ele);
+				m.rod().mpath_c.push(ele);
 				// Push each child onto the pstack (parent stack):
-				ele.rdk().gen = gen + 1;
+				ele.rod().gen = gen + 1;
 				pstack.push(ele);
 			});
 		}
@@ -217,16 +216,16 @@
 
 			var node0 = nodes[0];
 			if (!node0.isM() && node0.hasM()) node0 = node0.nodesTo()[0];
-			node0.rdk().gen = 0;
+			node0.rod().gen = 0;
 			stack.push(node0);
 
 			while (stack.length)
 			{
 				var n = stack.pop();
-				if (n.rdk().mark_dfs) continue;
-				n.rdk().mark_dfs = true;
+				if (n.rod().mark_dfs) continue;
+				n.rod().mark_dfs = true;
 
-				var gen = n.rdk().gen;
+				var gen = n.rod().gen;
 				var offset;
 
 				if ((min_gen === void 0) || (gen < min_gen)) min_gen = gen;
@@ -241,16 +240,16 @@
 					// M
 					// Pick an M to represent the whole m-path
 					offset = offsets[gen];
-					n.rdk().x = offset;
+					n.rod().x = offset;
 					scan_mpath(n, stack);
-					offsets[gen] = offset + n.rdk().mpath_w + hdist;
+					offsets[gen] = offset + n.rod().mpath_w + hdist;
 					gens[gen].push(n);
 				} else if (n.hasM())
 				{
 					// Member of M-Path
 					// Just push nearest M:
 					var m = n.nodesTo()[0];
-					m.rdk().gen = gen;
+					m.rod().gen = gen;
 					stack.push(m);
 				} else
 				{
@@ -261,12 +260,11 @@
 					var m = n.nodesFrom()[0];
 					if (m)
 					{
-						m.rdk().gen = gen - 1;
+						m.rod().gen = gen - 1;
 						stack.push(m);
 					}
-					n.rdk({ x: offset, w: 1 });
+					n.rod({ x: offset, w: 1 });
 				}
-				console.log('offset:', offset);
 			}
 		})();
 
@@ -276,7 +274,7 @@
 		{
 			if (node.isM())
 			{
-				return node.rdk().mpath_p.concat(node.rdk().mpath_c);
+				return node.rod().mpath_p.concat(node.rod().mpath_c);
 			} else
 			{
 				var from = node.nodesFrom();
@@ -298,23 +296,23 @@
 
 				for (n = 0; n < barynodes.length; n++)
 				{
-					bary += barynodes[n].rdk().x;
+					bary += barynodes[n].rod().x;
 				}
 
 				if (n > 0)
 				{
 					bary /= n;
-					node.rdk().x = bary;
+					node.rod().x = bary;
 					if (node.isM())
 					{
-						var members = node.rdk().mpath;
-						for (var j = 0; j < members.length; j++) members[j].rdk().x = bary;
+						var members = node.rod().mpath;
+						for (var j = 0; j < members.length; j++) members[j].rod().x = bary;
 					}
 				}
 			}
 
 			// 2. Sort the gen according to the bary value (stored in x):
-			gen.sort(function(a, b) { return a.rdk().x - b.rdk().x; });
+			gen.sort(function(a, b) { return a.rod().x - b.rod().x; });
 
 			// 3. Resolve collisions:
 			var col_open = false;
@@ -323,7 +321,7 @@
 			function collision_layout()
 			{
 				// Helper function, lays out nodes that are members of a collision group
-				var center = (collision[0].rdk().x + collision[collision.length-1].rdk().x) / 2;
+				var center = (collision[0].rod().x + collision[collision.length-1].rod().x) / 2;
 				var cx = center - col_wdith / 2;
 				if (cx < col_minx) cx = col_minx;
 				var log_nodes = '';
@@ -332,13 +330,13 @@
 				{
 					log_nodes += collision[j].id() + ' ';
 					cx += collision[j].pathWidth() / 2;
-					collision[j].rdk().x = cx;
+					collision[j].rod().x = cx;
 					cx += collision[j].pathWidth() / 2 + hdist;
 				}
 				col_open = false;
 			}
 
-			var lastx = gen[0].rdk().x + gen[0].pathWidth() / 2 + hdist;
+			var lastx = gen[0].rod().x + gen[0].pathWidth() / 2 + hdist;
 			for (var i = 1; i < gen.length; i++)
 			{
 				var n = gen[i];
@@ -346,19 +344,19 @@
 
 				if (!col_open)
 				{
-					if (n.rdk().x < lastx)
+					if (n.rod().x < lastx)
 					{
 						// new collision begins
 						collision = [];
 						col_open = true;
-						col_minx = i == 1 ? Number.NEGATIVE_INFINITY : gen[i-2].rdk().x + gen[i-2].pathWidth() + hdist;
+						col_minx = i == 1 ? Number.NEGATIVE_INFINITY : gen[i-2].rod().x + gen[i-2].pathWidth() + hdist;
 						col_wdith = gen[i-1].pathWidth() + hdist + n.pathWidth();
 						collision.push(gen[i-1]);
 						collision.push(n);
 					}
 				} else
 				{
-					if (n.rdk().x >= lastx)
+					if (n.rod().x >= lastx)
 					{
 						// collision ends, lay it out:
 						collision_layout();
@@ -370,7 +368,7 @@
 					}
 				}
 
-				if (n.rdk().x > lastx) lastx = n.rdk().x;
+				if (n.rod().x > lastx) lastx = n.rod().x;
 				lastx += n.pathWidth() / 2 + hdist;
 			}
 			if (col_open)
@@ -385,19 +383,19 @@
 				// Helper function, lays out member of mpath in order from index a to b
 				// also computes sum of quadratic distances for optimal order estimation
 				var inc = (a < b) - (a > b);
-				var cx = m.rdk().x - m.rdk().mpath_w / 2;
-				var mbs = m.rdk().mpath;
+				var cx = m.rod().x - m.rod().mpath_w / 2;
+				var mbs = m.rod().mpath;
 				var sum = 0;
 				for (var i = a; i != b + inc; i += inc)
 				{
 					cx += mbs[i].width() / 2;
-					mbs[i].rdk().x = cx;
+					mbs[i].rod().x = cx;
 					cx += mbs[i].width() / 2 + mdist;
 					if (!mbs[i].isM())
 					{
 						mbs[i].nodesFrom().each(function(i, ele)
 						{
-							var dist = mbs[i].rdk().x - ele.rdk().x;
+							var dist = mbs[i].rod().x - ele.rod().x;
 							sum += dist*dist;
 						})
 					}
@@ -409,15 +407,15 @@
 				var n = gen[i];
 				if (n.isM())
 				{
-					var mbs = n.rdk().mpath;
-					var mx = n.rdk().x;  // backup m's x coordinate, because it gets overwritten by layout
+					var mbs = n.rod().mpath;
+					var mx = n.rod().x;  // backup m's x coordinate, because it gets overwritten by layout
 					var l2r = mpath_layout(n, 0, mbs.length - 1);
-					n.rdk().x = mx;
+					n.rod().x = mx;
 					var r2l = mpath_layout(n, mbs.length - 1, 0);
 					if (l2r < r2l)
 					{
 						// The former was better, let's bring it back:
-						n.rdk().x = mx;
+						n.rod().x = mx;
 						mpath_layout(n, 0, mbs.length - 1);
 					}
 				}
@@ -448,9 +446,9 @@
 		var xmax = Number.NEGATIVE_INFINITY;
 		function y_dims(node)
 		{
-			node.rdk().y = y;
-			if (node.rdk().x < xmin) xmin = node.rdk().x;
-			if (node.rdk().x > xmax) xmax = node.rdk().x;
+			node.rod().y = y;
+			if (node.rod().x < xmin) xmin = node.rod().x;
+			if (node.rod().x > xmax) xmax = node.rod().x;
 		}
 		for (var i = min_gen; i <= max_gen; i++)
 		{
@@ -459,7 +457,7 @@
 			{
 				if (gens[i][j].isM())
 				{
-					var mbs = gens[i][j].rdk().mpath;
+					var mbs = gens[i][j].rod().mpath;
 					for (var k = 0; k < mbs.length; k++) y_dims(mbs[k]);
 				} else y_dims(gens[i][j]);
 			}
@@ -469,15 +467,7 @@
 
 		nodes.positions(function(i, ele)
 		{
-			var rdk = ele.rdk();
-
-			var ret =
-			{
-				x: rdk.x,
-				y: rdk.y
-			};
-
-			return ret;
+			return { x: ele.rod().x, y: ele.rod().y };
 		});
 
 		var padding = options.padding;
