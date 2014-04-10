@@ -352,7 +352,7 @@
 			for (var i = 1; i < gen.length; i++)
 			{
 				var n = gen[i];
-				lastx += n.pathWidth() / 2;
+				lastx += n.pathWidth() / 2;    // add half the width of this n so that we can compare with n.x
 
 				if (!col_open)
 				{
@@ -380,7 +380,8 @@
 					}
 				}
 
-				lastx = n.rdk().x + n.pathWidth() / 2 + hdist;
+				if (n.rdk().x > lastx) lastx = n.rdk().x;
+				lastx += n.pathWidth() / 2 + hdist;
 			}
 			if (col_open)
 			{
