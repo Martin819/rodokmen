@@ -117,7 +117,6 @@
 		// computes total width of the mpath
 		function scan_mpath(m, pstack)
 		{
-			var stack = [];
 			var w = m.width();
 			var gen = m.rdk().gen;
 			var x = m.rdk().x;
@@ -194,8 +193,9 @@
 
 			var nodesFrom = m.nodesFrom();
 			scan_dir(nodesFrom[0]);  // scan to the left of m
-			m.rdk().mpath_m = m.rdk().mpath.length;
+			m.rdk().mpath.reverse(); // the leftmost member needs to be on index 0
 			m.rdk().mpath.push(m);   // add self in between
+			m.rdk().mpath_m = m.rdk().mpath.length;
 			scan_dir(nodesFrom[1]);  // scan to the right of m
 
 			m.rdk().mpath_w = w;
