@@ -30,4 +30,6 @@ require __DIR__.'/relation.php';
 require __DIR__.'/lineage.php';
 
 // Router
-require __DIR__.'/../router/router_main.php';
+require __DIR__.'/../router/routerbase.php';
+require __DIR__.'/../router/routermain.php';
+require __DIR__.'/../router/routerlineage.php';

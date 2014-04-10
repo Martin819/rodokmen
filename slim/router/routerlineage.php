@@ -3,119 +3,15 @@ namespace Rodokmen;
 use \R;
 
 
-class RouterMain
+RouterBase::regRouter('Rodokmen\RouterLineage');
+
+class RouterLineage extends RouterBase
 {
-	private $app;
-
-	private static function get_bean($id, $pod, $app)
+	public function setup($app)
 	{
-		$bean = $pod->fromId($id);
-		if (!$bean) $app->halt(404);
-		else return $bean;
-	}
-
-	private function check_https()
-	{
-		// FIXME: fix & use this
-		if ($this->app->environment['Rodokmen.force_https'] && $this->app->environment['slim.url_scheme'] != 'https')
-			$this->app->redirect('https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], 301);
-	}
-
-	private function authRole($role, $redir = false) // TODO: name inconsistency
-	{
-		$app = $this->app;
-		return function() use ($app, $role, $redir)
-		{
-			if (!$app->user()->roleMatches($role))
-			{
-				if (!$redir) $app->halt(403);
-				else $app->redirect($app->urlFor('login'));
-			} else
-			{
-				$app->view->appendData(array('username' => $app->user()->username()));
-			}
-		};
-	}
-
-	private function checkAjax()
-	{
-		return function()
-		{
-			// TODO: if production, halt if not ajax request
-			// NOTE: needed to prevent non-ajax form submit
-		};
-	}
-
-	private function contentJson()
-	{
-		$app = $this->app;
-		return function() use ($app)
-		{
-			$app->response->headers->set('Content-Type', 'application/json');
-		};
-	}
-
-	public function setup()
-	{
-		$app = $this->app;
-
-		/*
-			NOTE:
-			Besides the routes defined here,
-			there are also two defined in .htaccess:
-			  /rs/*.ext, which is rewritten as /view/rs/ext/*.ext
-			  /media/*, which is rewriten as /data/media/*
-		*/
-
-
-		// Global settings:
-
-		// $app->view->setData('root', $app->request->getRootUri());  // FIXME: needed?
-		$app->view->setData('username', $app->user()->username());
-		$app->view->setData('contrib', $app->user()->roleMatches(Role::AllContrib));
-		$app->view->setData('ajs', 'javascript:void(0)');
-		header_remove('X-Powered-By');
-		\Slim\Route::setDefaultConditions(array
-		(
-    	'id' => '\d*'
-    ));
-
-
-    // Main routes:
-
-		$app->get('/', $this->authRole(Role::AllMembers, true), function() use ($app)
-		{
-			// $app->user()->logout();
-			$app->log->debug('Rendering home!');
-			$app->render('home.html');
-		})->name('home');
-
-		$app->get('/login', function() use ($app)
-		{
-			//FIXME: already logged in → redirect
-			$app->render('login.html');
-		})->name('login');
-		$app->post('/login', function() use ($app)
-		{
-			$user = User::fromUsername($app->request->post('rdk_username'));
-			if ($user && $user->login($app->request->post('rdk_pw')))
-				$app->redirect($app->urlFor('home'));
-			else
-				echo 'login error';  // FIXME: flash error, redirect back
-		});
-
-		$app->get('/logout', function() use ($app)
-		{
-			$app->user()->logout();
-			$app->redirect($app->urlFor('login'));
-		})->name('logout');
-
-
-		// Ajax routes:
-
 		$app->group('/ajax', $this->checkAjax(), function () use ($app)
 		{
-			// Linage route:
+			// Linage JSON route:
 			$app->get('/lineage', $this->authRole(Role::AllMembers), $this->contentJson(), function() use ($app)
 			{
 				$l = new Lineage();
@@ -126,7 +22,7 @@ class RouterMain
 			// Person details for sidebar:
 			$app->get('/person/:id', $this->authRole(Role::AllMembers), function($id) use ($app)
 			{
-				$bean = self::get_bean($id, new Person(), $app);
+				$bean = self::getBean($id, new Person(), $app);
 				$app->view->setData($bean->sidebarData());
 				$app->render('ajax/sidebar-person.html');
 			});
@@ -134,7 +30,7 @@ class RouterMain
 			// Edit existing person:
 			$app->get('/person/edit/:id', $this->authRole(Role::AllContrib), function($id) use ($app)
 			{
-				$bean = self::get_bean($id, new Person(), $app);
+				$bean = self::getBean($id, new Person(), $app);
 				$app->view->setData($bean->infoData());
 				$app->view->setData('action', $app->urlFor('person-edit-p'));
 				$app->render('ajax/form-person.html');
@@ -143,7 +39,7 @@ class RouterMain
 			{
 				$rq = $app->request;
 				$person = new Person();
-				$bean = self::get_bean($rq->post('rdk_id'), $person, $app);
+				$bean = self::getBean($rq->post('rdk_id'), $person, $app);
 				$bean->edit($rq);
 				$person->store($bean);
 				// FIXME: log
@@ -152,7 +48,7 @@ class RouterMain
 			// Delete a person:
 			$app->get('/person/delete/:id', $this->authRole(Role::AllContrib), function($id) use ($app)
 			{
-				$bean = self::get_bean($id, new Person(), $app);
+				$bean = self::getBean($id, new Person(), $app);
 				$app->view->setData(array(
 					'id' => $id,
 					'todelete' => $bean->canBeDeleted(),
@@ -162,7 +58,7 @@ class RouterMain
 			})->name('person-delete');
 			$app->post('/person/delete', $this->authRole(Role::AllContrib), function() use ($app)
 			{
-				$p = self::get_bean($app->request->post('rdk_id'), new Person(), $app);
+				$p = self::getBean($app->request->post('rdk_id'), new Person(), $app);
 				$delbeans = $p->deleteBeans();
 				if (empty($delbeans)) $app->halt(403);
 				else DB::transaction(DB::data, function() use ($delbeans)
@@ -176,7 +72,7 @@ class RouterMain
 			// Marriage details for sidebar
 			$app->get('/marriage/:id', $this->authRole(Role::AllMembers), function($id) use ($app)
 			{
-				$bean = self::get_bean($id, new Marriage(), $app);
+				$bean = self::getBean($id, new Marriage(), $app);
 				$app->view->setData($bean->sidebarData());
 				$app->render('ajax/sidebar-marriage.html');
 			});
@@ -186,7 +82,7 @@ class RouterMain
 			// Add a new child to a marriage
 			$app->get('/marriage/newchild/:id', $this->authRole(Role::AllContrib), function($id) use ($app)
 			{
-				$bean = self::get_bean($id, new Marriage(), $app);
+				$bean = self::getBean($id, new Marriage(), $app);
 				$app->view->setData('id', $id);
 				$app->view->setData('action', $app->urlFor('marriage-newchild-p'));
 				$app->render('ajax/form-person.html');
@@ -196,7 +92,7 @@ class RouterMain
 				DB::transaction(DB::data, function() use ($app)
 				{
 					$rq = $app->request;
-					$m = self::get_bean($rq->post('rdk_id'), new Marriage(), $app);
+					$m = self::getBean($rq->post('rdk_id'), new Marriage(), $app);
 
 					$pod_p = new Person();
 					$pod_r = new Relation();
@@ -229,7 +125,7 @@ class RouterMain
 					$pod_m = new Marriage();
 					$pod_r = new Relation();
 
-					$p = self::get_bean($rq->post('rdk_id'), $pod_p, $app);
+					$p = self::getBean($rq->post('rdk_id'), $pod_p, $app);
 					$np = $pod_p->setupNew();
 					$np->edit($rq);
 					$m = $pod_m->setupNew();
@@ -261,7 +157,7 @@ class RouterMain
 					$pod_m = new Marriage();
 					$pod_r = new Relation();
 
-					$c = self::get_bean($rq->post('rdk_id'), $pod_p, $app);
+					$c = self::getBean($rq->post('rdk_id'), $pod_p, $app);
 					if (!empty($c->parents())) $app->halt(403);  // Checks whether this person already has parents
 
 					$p1 = $pod_p->setupNew();
@@ -287,7 +183,7 @@ class RouterMain
 			// Delete a marriage:
 			$app->get('/marriage/delete/:id', $this->authRole(Role::AllContrib), function($id) use ($app)
 			{
-				$bean = self::get_bean($id, new Marriage(), $app);
+				$bean = self::getBean($id, new Marriage(), $app);
 				$app->view->setData(array(
 					'id' => $id,
 					'todelete' => $bean->canBeDeleted(),
@@ -297,7 +193,7 @@ class RouterMain
 			})->name('marriage-delete');
 			$app->post('/marriage/delete', $this->authRole(Role::AllContrib), function() use ($app)
 			{
-				$m = self::get_bean($app->request->post('rdk_id'), new Marriage(), $app);
+				$m = self::getBean($app->request->post('rdk_id'), new Marriage(), $app);
 				$delbeans = $m->deleteBeans();
 				if (empty($delbeans)) $app->halt(403);
 				else DB::transaction(DB::data, function() use ($delbeans)
@@ -311,7 +207,7 @@ class RouterMain
 
 	public function __construct($app)
 	{
-		$this->app = $app;
-		$this->setup();
+		parent::__construct($app);
 	}
 };
+
