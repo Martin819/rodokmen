@@ -29,7 +29,7 @@
 		},
 		pathWidth: function()
 		{
-			return this.isM() ? this.rod().mpath_w : this.width();
+			return this.isM() ? this.rod().mpath_w : this.outerWidth();
 		}
 	});
 	//
@@ -96,8 +96,6 @@
 			raphael.notify({ type: 'load', collection: cy.elements() });
 		}
 
-		// FIXME: outerWidth (?)
-
 
 		var min_gen, max_gen;
 		var gens = [];
@@ -116,7 +114,7 @@
 		// computes total width of the mpath
 		function scan_mpath(m, pstack)
 		{
-			var w = m.width();
+			var w = m.outerWidth();
 			var gen = m.rod().gen;
 			var x = m.rod().x;
 
@@ -186,7 +184,7 @@
 					}
 
 					node.rod({ gen: gen, x: x });
-					w += mdist + node.width();
+					w += mdist + node.outerWidth();
 				}
 			}
 
@@ -255,7 +253,7 @@
 				{
 					// Leaf
 					offset = offsets[gen];
-					offsets[gen] = offset + n.width() + hdist;
+					offsets[gen] = offset + n.outerWidth() + hdist;
 					gens[gen].push(n);
 					var m = n.nodesFrom()[0];
 					if (m)
@@ -388,9 +386,9 @@
 				var sum = 0;
 				for (var i = a; i != b + inc; i += inc)
 				{
-					cx += mbs[i].width() / 2;
+					cx += mbs[i].outerWidth() / 2;
 					mbs[i].rod().x = cx;
-					cx += mbs[i].width() / 2 + mdist;
+					cx += mbs[i].outerWidth() / 2 + mdist;
 					if (!mbs[i].isM())
 					{
 						mbs[i].nodesFrom().each(function(i, ele)
