@@ -45,7 +45,7 @@
 		mdist: 30,
 		vdist: 80,
 
-		baryScans: 2,
+		baryScans: 3,
 		rendererRaphael: true
 	};
 
@@ -240,13 +240,10 @@
 				{
 					// M
 					// Pick an M to represent the whole m-path
-					offset = offsets[gen] + hdist;
+					offset = offsets[gen];
 					n.rdk().x = offset;
-					// var width = subdfs(n, stack);
-					// offsets[gen] += offset + width;
-					// n.rdk().mpath_w = width;
 					scan_mpath(n, stack);
-					offsets[gen] += offset + n.rdk().mpath_w;
+					offsets[gen] = offset + n.rdk().mpath_w + hdist;
 					gens[gen].push(n);
 				} else if (n.hasM())
 				{
@@ -258,8 +255,8 @@
 				} else
 				{
 					// Leaf
-					offset = offsets[gen] + hdist;
-					offsets[gen] += offset + n.width();
+					offset = offsets[gen];
+					offsets[gen] = offset + n.width() + hdist;
 					gens[gen].push(n);
 					var m = n.nodesFrom()[0];
 					if (m)
@@ -269,40 +266,33 @@
 					}
 					n.rdk({ x: offset, w: 1 });
 				}
+				console.log('offset:', offset);
 			}
 		})();
 
 		// Helper for baryGen,
 		// returns an array of nodes to use for barycenter heuristic for each node in a gen
-		function baryNodes(node, dir) // dir: true = down, false = up
+		function baryNodes(node)
 		{
-			dir = !!dir;
-			if (dir)
+			if (node.isM())
 			{
-				if (node.isM()) return node.rdk().mpath_p;
-				else
-				{
-					var from = node.nodesFrom();
-					return from.length ? from[0] : [];
-				}
+				return node.rdk().mpath_p.concat(node.rdk().mpath_c);
 			} else
 			{
-				if (node.isM()) return node.rdk().mpath_c;
-				else return [];
+				var from = node.nodesFrom();
+				return from.length ? [from[0]] : [];
 			}
 		}
 
 		// baryGen determines x value for each element in a generation
 		// by a barycenter heuristic often used to layout DAG dependency trees
-		function baryGen(gen, dir) // dir: true = down, false = up
+		function baryGen(gen)
 		{
-			dir = !!dir;
-
 			// 1. Determine bary values:
 			for (var i = 0; i < gen.length; i++)
 			{
 				var node = gen[i];
-				var barynodes = baryNodes(node, dir);
+				var barynodes = baryNodes(node);
 				var bary = 0;
 				var n;
 
@@ -323,7 +313,7 @@
 				}
 			}
 
-			// 2. Sort the according to the bary value (stored in x):
+			// 2. Sort the gen according to the bary value (stored in x):
 			gen.sort(function(a, b) { return a.rdk().x - b.rdk().x; });
 
 			// 3. Resolve collisions:
@@ -358,7 +348,7 @@
 				{
 					if (n.rdk().x < lastx)
 					{
-						// New collision begins
+						// new collision begins
 						collision = [];
 						col_open = true;
 						col_minx = i == 1 ? Number.NEGATIVE_INFINITY : gen[i-2].rdk().x + gen[i-2].pathWidth() + hdist;
@@ -385,7 +375,7 @@
 			}
 			if (col_open)
 			{
-				// Last collision remains open, lay it out:
+				// last collision remains open, lay it out:
 				collision_layout();
 			}
 
@@ -434,24 +424,22 @@
 			}
 		}
 
-		// Let's perform baryGen a couple of times:
+		// Performs baryGens in top-to-bottom-to-top manner
+		function baryGens(i)
+		{
+			if (i > max_gen) return;
+			baryGen(gens[i], true);
+			baryGens(i + 1);
+			baryGen(gens[i], false);
+		}
+
+		// Let's perform a couple of rounds of baryGens
 		for (var i = 0; i < options.baryScans; i++)
 		{
-			for (var j = min_gen + 1; j <= max_gen; j++)
-			{
-				baryGen(gens[j], true);
-			}
-			for (var j = max_gen - 1; j >= min_gen; j--)
-			{
-				baryGen(gens[j], false);
-			}
+			baryGens(min_gen);
 		}
-		// What goes up, must come down... Let's baryGen one last time:
-		// NOTE: this time all gens are processed, this is for the case when there's just one gen
-		for (var j = min_gen; j <= max_gen; j++)
-		{
-			baryGen(gens[j], true);
-		}
+
+
 
 		// Determine y values based on gens and heights,
 		// also determin graph dimensions:
