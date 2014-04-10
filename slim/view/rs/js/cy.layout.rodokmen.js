@@ -429,10 +429,15 @@
 			baryGen(gens[i], false);
 		}
 
-		// Let's perform a couple of rounds of baryGens
+		// Let's perform a couple of rounds of baryGens:
 		for (var i = 0; i < options.baryScans; i++)
 		{
 			baryGens(min_gen);
+		}
+		// And one last round from top to bottom only:
+		for (var i = min_gen; i <= max_gen; i++)
+		{
+			baryGen(gens[i]);
 		}
 
 
