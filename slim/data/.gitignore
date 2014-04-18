@@ -1,0 +1,6 @@
+*
+!.gitignore
+!media/
+
+media/*
+!media/photo/
