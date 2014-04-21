@@ -12,7 +12,6 @@ class RouterMain extends RouterBase
 
 		$app->get('/', $this->authRole(Role::AllMembers, true), function() use ($app)
 		{
-			// $app->log->debug('Rendering home!');
 			$app->render('home.html');
 		})->name('home');
 

@@ -60,24 +60,20 @@ class App extends Slim\Slim
 	{
 		$this->configureMode('development', function ()
 		{
-			// FIXME
 			$this->config(array
 			(
 				'log.enabled' => true,
 				'log.level' => \Slim\Log::DEBUG,
-				// 'log.writer' => new Logger(__DIR__.'/../data/log'),
 				'debug' => true
 			));
 		});
 
 		$this->configureMode('production', function ()
 		{
-			// FIXME
 			$this->config(array
 			(
 				'log.enabled' => true,
 				'log.level' => \Slim\Log::NOTICE,
-				// 'log.writer' => new Logger(__DIR__.'/../data/log'),
 				'debug' => false
 			));
 			$this->environment['Rodokmen.force_https'] = true;
