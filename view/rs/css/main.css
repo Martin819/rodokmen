@@ -29,6 +29,39 @@ a:hover, a:active
 	color: #58c7fa;
 }
 
+body.login
+{
+	background-color: #1a1a1a;
+	background-image: url('stressed-linen.png');
+}
+
+#login
+{
+	background-image: url('logo-white.png');
+	background-repeat: no-repeat;
+	width: 300px;
+	min-height: 160px;
+	margin: 10% auto 0 auto;
+	padding-left: 200px;
+}
+
+#login h1
+{
+	font-size: 1.05em;
+}
+
+#login form
+{
+	text-align: right;
+}
+
+#login label
+{
+	display: inline-block;
+	width: 50px;
+	margin-right: 10px;
+}
+
 #menubar
 {
 	display: table;

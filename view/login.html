@@ -1,14 +1,20 @@
 {% include 'header.html' %}
 </head>
-<body>
+<body class="login">
 {# FIXME: css classes #}
-<div id="login" class="round white">
+<div id="login">
+	<h1>Přihlášení do aplikace Rodokmen</h1>
 	<form action="{{ baseUrl() }}/login" method="post">
-		<label for="username">E-mail:</label>
-		<input type="text" name="rdk_username" id="username" class="in-text focus round-small"/>
-		<label for="password">Heslo:</label>
-		<input type="password" name="rdk_pw" id="password" class="in-text round-small"/>
-		<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+		<div>
+			<label for="username">E-mail:</label>
+			<input type="text" name="rdk_username" id="username" class="in-text focus round-small"/>
+		</div>
+		<div>
+			<label for="password">Heslo:</label>
+			<input type="password" name="rdk_pw" id="password" class="in-text round-small"/>
+		</div>
+		{# <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/> #}
+		<input type="submit" value="Přihlásit" class="right" />
 	</form>
 </div>
 <script type="text/javascript">

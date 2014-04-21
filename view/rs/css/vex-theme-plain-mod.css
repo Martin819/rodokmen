@@ -86,7 +86,6 @@
 .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input textarea, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="date"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="datetime"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="datetime-local"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="email"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="month"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="number"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="password"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="search"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="tel"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="text"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="time"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="url"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="week"]
 {
 	background: #f0f0f0;
-	/*border: 2px solid #f0f0f0;*/
 	width: 70%;
 	padding: 0.25em 0.67em;
 	border: 0;
