@@ -1,40 +1,6 @@
 
 (function(rdk, $, undefined)
 {
-	// How to namespace in JS: http://stackoverflow.com/a/5947280/786102
-
-	var spinner;
-
-	function spinnerOn(element)
-	{
-		if (element)
-		{
-			var se = spinner.element();
-			se.appendTo(element);
-			se.css('top',  element.outerHeight()/2);
-			se.css('left', element.outerWidth()/2);
-			spinner.play();
-		} else
-		{
-			spinner.element().appendTo($('body'));
-			spinner.pause();
-		}
-	}
-
-	function ajaxUrl(url)
-	{
-		return rdk.baseUrl+'/ajax'+url;
-	}
-
-	function ajaxError(method)
-	{
-		if (method != 'post') method = 'get';
-		return function(jqXHR, textStatus, errorThrown)
-		{
-			vex.dialog.alert(rdk.strings.ajaxErrMsg[method]);
-		}
-	}
-
 	function bindCyEvents(cy)
 	{
 		cy.nodes('.p').on('select', function(ev) { loadSidebar('person',   ev.cyTarget[0].data().oid); });
@@ -53,7 +19,7 @@
 		.on('click', '.js-openform', function(e)
 		{
 			e.preventDefault();
-			openForm($(this).data('title'), $(this).attr('href'));
+			rdk.openForm($(this).data('title'), $(this).attr('href'));
 		});
 
 		$(document)
@@ -61,64 +27,20 @@
 		{
 			e.preventDefault();
 			var $t = $(this);
-			submitForm($t.closest('.vex'), $t.closest('form'));
+			var $vex = $t.closest('.vex');
+			var vexD = $vex.data('vex');
+
+			rdk.submitForm($vex, $t.closest('form'), function()
+			{
+				rdk.spinnerOn(false);
+				cy.elements().remove();
+				vexD.afterClose = function() { loadLineage(); }
+				vex.close(vexD.id);
+			});
 		})
 		.on('click', '.js-formcancel', function(e)
 		{
 			vex.close($(this).closest('.vex').data('vex').id);
-		});
-	}
-
-	function openForm(heading, url)
-	{
-		vex.open(
-		{
-			content: '<h2>'+heading+'</h2><div class="hr"></div>',
-			css: { padding: '50px 0' },  // TODO: move css (?)
-			contentCSS:
-			{
-				position: 'absolute',
-				top: '50px',
-				bottom: '50px',
-				left: '20%'
-			},
-			afterOpen: function($vexContent) { loadForm(url, $vexContent); },
-			afterClose: function() {}
-		});
-	}
-
-	function loadForm(url, $vexContent)
-	{
-		spinnerOn($vexContent);
-		$.get(url, '', 'html')
-		.done(function(data)
-		{
-			$vexContent.append(data);
-			$('.vex .focus').focus();
-		})
-		.fail(ajaxError())
-		.always(function() { spinnerOn(false); });
-	}
-
-	function submitForm($vex, $form)
-	{
-		// TODO: select new element after form delivered, if any
-
-		var url = $form.attr('action');
-		var data = $form.serialize();
-		var vexD = $vex.data('vex');
-
-		$form.hide();
-		spinnerOn($vex);
-
-		$.post(url, data)
-		.fail(ajaxError('post'))
-		.always(function()
-		{
-			spinnerOn(false);
-			cy.elements().remove();
-			vexD.afterClose = function() { loadLineage(); }
-			vex.close(vexD.id);
 		});
 	}
 
@@ -131,17 +53,17 @@
 		var sbLoadTimer = setTimeout(function()
 		{
 			$('#sidebar-content').detach();
-			spinnerOn($('#sidebar'));
+			rdk.spinnerOn($('#sidebar'));
 			clearTimeout(sbLoadTimer);
 		}, 750);
 
-		$.get(ajaxUrl('/'+type+'/'+id, '', 'html'))
+		$.get(rdk.ajaxUrl('/'+type+'/'+id, '', 'html'))
 		.done(function(data) { $('#sidebar').html(data); })
-		.fail(ajaxError())
+		.fail(rdk.ajaxError())
 		.always(function()
 		{
 			clearTimeout(sbLoadTimer);
-			spinnerOn(false);
+			rdk.spinnerOn(false);
 		});
 	}
 
@@ -156,37 +78,24 @@
 
 	function loadLineage()
 	{
-		spinnerOn($('#cy'));
+		rdk.spinnerOn($('#cy'));
 
-		$.get(ajaxUrl('/lineage'), '', 'json')
+		$.get(rdk.ajaxUrl('/lineage'), '', 'json')
 		.done(function(data)
 		{
 			cy.load(data, function()
 			{
 				this.nodes().ungrabify();
 				bindCyEvents(this);
-				spinnerOn(false);
+				rdk.spinnerOn(false);
 				// TODO: lineage stats → sidebar (?)
 			});
 		})
-		.fail(ajaxError());
+		.fail(rdk.ajaxError());
 	}
 
 	$(document).ready(function()
 	{
-		// jQuery
-		$.ajaxSetup({ timeout: 20000 });
-
-		// Loading spinner
-		spinner = new rdk.Spinner($('#spinner'),
-		{
-			size: 80,
-			stroke: 4,
-			color1: '#1173A7',
-			color2: '#1173A7',
-			speed: 8000
-		});
-
 		// Bind evets
 		bindSbEvents();
 
