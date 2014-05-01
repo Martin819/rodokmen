@@ -41,10 +41,10 @@ abstract class RouterBase
 
 	protected function checkAjax()
 	{
-		return function()
+		$app = $this->app;
+		return function() use ($app)
 		{
-			// TODO: if production, halt if not ajax request
-			// NOTE: needed to prevent non-ajax form submit
+			if (!$app->request->isAjax()) $app->halt(403);
 		};
 	}
 
