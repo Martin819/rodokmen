@@ -123,6 +123,7 @@
 		{
 			$vexContent.append(data);
 			$('.vex .focus').focus();
+			$('.vex form').ajaxForm();
 		})
 		.fail(rdk.ajaxError())
 		.always(function() { rdk.spinnerOn(false); });
@@ -130,17 +131,14 @@
 
 	rdk.submitForm = function($vex, $form, alwayscb)
 	{
-		// TODO: select new element after form delivered, if any
-
-		var url = $form.attr('action');
-		var data = $form.serialize();
+		$form.ajaxSubmit();
+		var xhr = $form.data('jqxhr');
 
 		$form.hide();
 		rdk.spinnerOn($vex);
 
-		$.post(url, data)
-		.fail(rdk.ajaxError('post'))
-		.always(alwayscb());
+		xhr.fail(rdk.ajaxError('post'));
+		return xhr;
 	}
 
 

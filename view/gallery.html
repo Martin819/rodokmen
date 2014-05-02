@@ -1,0 +1,53 @@
+{% include 'header.html' %}
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/gallery.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex-theme-plain-mod.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/fotorama.css" />
+	<script language="javascript" type="text/javascript" src="rs/lib/jquery.form.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/lib/raphael.min.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/lib/vex.combined.min.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/lib/fotorama.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/utils.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/gallery.js"></script>
+	<script language="javascript" type="text/javascript">
+		vex.defaultOptions.className = 'vex-theme-plain';
+	</script>
+</head>
+<body>
+	<div id="spinner"></div>
+	<div id="fotorama" class="fotorama" data-allowfullscreen="true" data-nav="thumbs" data-width="1%" data-ratio="800/600">
+ 		{% for m in media %}
+ 			<div data-thumb="{{m.thumb_url}}" data-img="{{m.view_url}}">
+ 				<div class="html">{{m.comment}}</div>
+ 			</div>
+		{% endfor %}
+	</div>
+
+	{% include 'menubar.html' %}
+	<div id="gallery" class="shadow-top">
+		{% if contrib %}
+			<div id="buttons">
+				<div class="right">
+					<a href="{{urlFor('gallery-upload')}}" class="js-openform button" data-title="Přidat fotografii">Přidat fotografii</a>
+				</div>
+			</div>
+		{% endif %}
+		{% set year = -1 %}
+		{% for m in media %}
+			{% if m.year != year %}
+				<h2>{{m.year}}</h2>
+				{% set year = m.year %}
+			{% endif %}
+			<a href="{{m.view_url}}" class="photo" data-idx="{{loop.index0}}" style="background-image: url('{{m.thumb_url}}');">
+				<div class="photo-tools">
+					<span class="photo-download" data-href="{{urlFor('gallery-download', {'id': m.id})}}">stáhnout</span>
+					{% if contrib %}
+						<span class="js-openform" data-title="Upravit fotografii" data-href="{{urlFor('gallery-edit', {'id': m.id})}}">upravit</span>
+						<span class="js-openform" data-title="Smazat fotografii" data-href="{{urlFor('gallery-delete', {'id': m.id})}}">smazat</span>
+					{% endif %}
+				</div>
+			</a>
+		{% endfor %}
+	</div>
+</body>
+</html>

@@ -75,6 +75,7 @@
 .vex.vex-theme-plain label
 {
 	display: inline-block;
+	vertical-align: top;
 	width: 25%;
 }
 

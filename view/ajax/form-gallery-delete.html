@@ -1,0 +1,12 @@
+<form action="{{action}}" method="post" class="vex-dialog-form">
+	<input type="hidden" name="rdk_id" value="{{bean.id}}" />
+	<div>
+		<p>Bude smazána fotografie:</p>
+		<img src="{{bean.thumb_url}}">
+		<p>Toto nelze vzít zpět. Pokračovat?</p>
+	</div>
+	<div class="vex-dialog-buttons">
+		<input type="submit" value="Pokračovat" class="focus js-formsubmit vex-dialog-button-danger vex-dialog-button" />
+		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+	</div>
+</form>

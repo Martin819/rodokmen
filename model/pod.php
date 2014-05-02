@@ -27,6 +27,12 @@ class Pod
 		R::store($bean);
 	}
 
+	public function trash($bean)
+	{
+		$this->dbSelect();
+		R::trash($bean);
+	}
+
 	public function fromId($id)
 	{
 		$this->dbSelect();
@@ -34,10 +40,10 @@ class Pod
 		return $bean->id ? $bean : false;
 	}
 
-	public function findAll()
+	public function findAll($query = '')
 	{
 		$this->dbSelect();
-		return R::findAll($this->name);
+		return R::findAll($this->name, $query);
 	}
 
 	public function setupNew()

@@ -57,6 +57,21 @@ abstract class RouterBase
 		};
 	}
 
+	protected function downloadFile($filename)
+	{
+		\header('Content-Description: File Transfer');
+		\header('Content-Type: application/octet-stream');
+		\header('Content-Disposition: attachment; filename='.\basename($filename));
+		\header('Expires: 0');
+		\header('Cache-Control: must-revalidate');
+		\header('Pragma: public');
+		\header('Content-Length: '.	\filesize($filename));
+		\ob_clean();
+		\flush();
+		\readfile($filename);
+		exit;
+	}
+
 	abstract public function setup($app);
 
 	public function __construct($app)

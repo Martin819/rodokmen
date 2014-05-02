@@ -22,11 +22,13 @@ a:link, a:visited
 {
 	color: #179edd;
 	text-decoration: none;
+	outline: 0;
 }
 
 a:hover, a:active
 {
 	color: #58c7fa;
+	outline: 0;
 }
 
 body.login

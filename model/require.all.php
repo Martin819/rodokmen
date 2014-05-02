@@ -13,6 +13,7 @@ require __DIR__.'/../lib/Slim/Views/Twig.php';
 require __DIR__.'/../lib/Slim/Views/TwigExtension.php';
 require __DIR__.'/../lib/pbkdf2/pbkdf2.php';
 require __DIR__.'/../lib/RedBeanPHP/rb.phar';
+require __DIR__.'/../lib/PHPThumb/ThumbLib.inc.php';
 
 // App
 require __DIR__.'/logger.php';
@@ -28,8 +29,10 @@ require __DIR__.'/person.php';
 require __DIR__.'/marriage.php';
 require __DIR__.'/relation.php';
 require __DIR__.'/lineage.php';
+require __DIR__.'/media.php';
 
 // Router
 require __DIR__.'/../router/routerbase.php';
 require __DIR__.'/../router/routermain.php';
 require __DIR__.'/../router/routerlineage.php';
+require __DIR__.'/../router/routergallery.php';

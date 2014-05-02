@@ -30,7 +30,10 @@
 			var $vex = $t.closest('.vex');
 			var vexD = $vex.data('vex');
 
-			rdk.submitForm($vex, $t.closest('form'), function()
+			// TODO: select new element after form delivered, if any
+
+			var xhr = rdk.submitForm($vex, $t.closest('form'));
+			xhr.always(function()
 			{
 				rdk.spinnerOn(false);
 				cy.elements().remove();
