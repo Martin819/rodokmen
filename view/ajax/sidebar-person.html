@@ -49,6 +49,11 @@
 					{% endif %}
 				{% endfor %}
 			</li>
+			<li>
+				<h3>Datum narození:</h3>
+				{# <span>{% if {{p.birth_date}} %}{{p.birth_date}}{% else %}?{% endif %}</span> #}
+				<span>{{p.birth_date|default('?')}}</span>
+			</li>
 		</ul>
 </div>
 {% endspaceless %}

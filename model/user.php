@@ -125,7 +125,7 @@ class User extends UserBase
 		} else
 		{
 			Db::useAuth();
-			$bean = R::findOne(self::bean, 'username = ?', [$username]);
+			$bean = R::findOne(self::bean, 'username = ?', array($username));
 			if ($bean) return new User($bean);
 			else return false;
 		}

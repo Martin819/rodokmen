@@ -158,7 +158,7 @@ class RouterLineage extends RouterBase
 					$pod_r = new Relation();
 
 					$c = self::getBean($rq->post('rdk_id'), $pod_p, $app);
-					if (!empty($c->parents())) $app->halt(403);  // Checks whether this person already has parents
+					if ($c->parents()) $app->halt(403);  // Checks whether this person already has parents
 
 					$p1 = $pod_p->setupNew();
 					$p1->setNames($rq->post('rdk_p1_firstname'), $rq->post('rdk_p1_lastname'));

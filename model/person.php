@@ -65,7 +65,8 @@ class ModelPerson extends \RedBean_SimpleModel
 
 	public function displayName($sep = ' ')
 	{
-		$n = $this->names()[0];
+		$n = $this->names();
+		$n = $n[0];  // Compatibility hack
 		return $n->first.$sep.$n->last;
 	}
 
@@ -128,7 +129,8 @@ class ModelPerson extends \RedBean_SimpleModel
 		$ret = array(
 			'id' => $this->bean->id,
 			'dname' => $this->displayName(),
-			'name' => $name
+			'name' => $name,
+			'birth_date' => dateFromIso($this->birth_date)
 		);
 
 		return $ret;
@@ -142,7 +144,7 @@ class ModelPerson extends \RedBean_SimpleModel
 			'p' => $this->infoData(),
 			'parentMarriage' => $pm ? $pm->cyId() : '',
 			'parents' => self::makeLinks($this->parents()),
-			'children' => self::makeLinks($this->children())
+			'children' => self::makeLinks($this->children()),
 		);
 
 		$ret['marriages'] = array();
@@ -164,6 +166,13 @@ class ModelPerson extends \RedBean_SimpleModel
 		$bean = $this->bean;
 
 		$this->setNames($rq->post('rdk_firstname'), $rq->post('rdk_lastname'));
+
+		$birth_date = $rq->post('rdk_birth_date');
+		if (!empty($birth_date))
+		{
+			$date = dateToIso($birth_date);
+			if ($date) $this->birth_date = $date;
+		} else unset($this->birth_date);
 	}
 
 	public function canBeDeleted()

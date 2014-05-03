@@ -9,6 +9,10 @@
 			<label for="rdk_lastname">Příjmení</label>
 			<input type="text" name="rdk_lastname" class="vex-dialog-input" value="{{name.last}}" />
 		</div>
+		<div class="vex-input-field">
+			<label for="rdk_lastname">Datum narození</label>
+			<input type="text" name="rdk_birth_date" class="vex-dialog-input mask" value="{{birth_date}}" data-mask="09.09.0999" placeholder="D.M.RRRR" />
+		</div>
 	</div>
 	<div class="vex-dialog-buttons">
 		<input type="submit" value="Uložit" class="js-formsubmit vex-dialog-button-primary vex-dialog-button" />

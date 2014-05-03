@@ -12,7 +12,8 @@ Twig_Autoloader::register();
 require __DIR__.'/../lib/Slim/Views/Twig.php';
 require __DIR__.'/../lib/Slim/Views/TwigExtension.php';
 require __DIR__.'/../lib/pbkdf2/pbkdf2.php';
-require __DIR__.'/../lib/RedBeanPHP/rb.phar';
+// require __DIR__.'/../lib/RedBeanPHP/rb.phar';
+require __DIR__.'/../lib/RedBeanPHP/loader.php';
 require __DIR__.'/../lib/PHPThumb/ThumbLib.inc.php';
 
 // App
@@ -20,6 +21,7 @@ require __DIR__.'/logger.php';
 require __DIR__.'/app.php';
 
 // Model
+require __DIR__.'/utils.php';
 require __DIR__.'/db.php';
 require __DIR__.'/session.php';
 require __DIR__.'/config.php';

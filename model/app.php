@@ -89,6 +89,8 @@ class App extends Slim\Slim
 			'templates.path' => __DIR__.'/../view'
 		));
 
+		\date_default_timezone_set('UTC');
+
 		$this->log->setWriter(new Logger($this, __DIR__.'/../data/log'));
 
 		$this->setName($name);

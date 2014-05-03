@@ -122,8 +122,12 @@
 		.done(function(data)
 		{
 			$vexContent.append(data);
-			$('.vex .focus').focus();
 			$('.vex form').ajaxForm();
+			$('.mask').each(function()
+			{
+				$(this).mask($(this).data('mask'));
+			});
+			$('.vex .focus').focus();
 		})
 		.fail(rdk.ajaxError())
 		.always(function() { rdk.spinnerOn(false); });
