@@ -33,7 +33,7 @@ class RouterLineage extends RouterBase
 				$bean = self::getBean($id, new Person(), $app);
 				$app->view->setData($bean->infoData());
 				$app->view->setData('action', $app->urlFor('person-edit-p'));
-				$app->render('ajax/form-person.html');
+				$app->render('ajax/form-tree-person.html');
 			})->name('person-edit');
 			$app->post('/person/edit', $this->authRole(Role::AllContrib), function() use ($app)
 			{
@@ -54,7 +54,7 @@ class RouterLineage extends RouterBase
 					'todelete' => $bean->canBeDeleted(),
 					'action' => $app->urlFor('person-delete-p')
 				));
-				$app->render('ajax/form-delete.html');
+				$app->render('ajax/form-tree-delete.html');
 			})->name('person-delete');
 			$app->post('/person/delete', $this->authRole(Role::AllContrib), function() use ($app)
 			{
@@ -85,7 +85,7 @@ class RouterLineage extends RouterBase
 				$bean = self::getBean($id, new Marriage(), $app);
 				$app->view->setData('id', $id);
 				$app->view->setData('action', $app->urlFor('marriage-newchild-p'));
-				$app->render('ajax/form-person.html');
+				$app->render('ajax/form-tree-person.html');
 			})->name('marriage-newchild');
 			$app->post('/marriage/newchild', $this->authRole(Role::AllContrib), function() use ($app)
 			{
@@ -113,7 +113,7 @@ class RouterLineage extends RouterBase
 			{
 				$app->view->setData('id', $id);
 				$app->view->setData('action', $app->urlFor('marriage-new-withperson-p'));
-				$app->render('ajax/form-person.html');
+				$app->render('ajax/form-tree-person.html');
 			})->name('marriage-new-withperson');
 			$app->post('/marriage/new/withperson', $this->authRole(Role::AllContrib), function() use ($app)
 			{
@@ -146,7 +146,7 @@ class RouterLineage extends RouterBase
 			{
 				$app->view->setData('id', $id);
 				$app->view->setData('action', $app->urlFor('marriage-new-forchild-p'));
-				$app->render('ajax/form-parents.html');
+				$app->render('ajax/form-tree-parents.html');
 			})->name('marriage-new-forchild');
 			$app->post('/marriage/new/forchild', $this->authRole(Role::AllContrib), function() use ($app)
 			{
@@ -189,7 +189,7 @@ class RouterLineage extends RouterBase
 					'todelete' => $bean->canBeDeleted(),
 					'action' => $app->urlFor('marriage-delete-p')
 				));
-				$app->render('ajax/form-delete.html');
+				$app->render('ajax/form-tree-delete.html');
 			})->name('marriage-delete');
 			$app->post('/marriage/delete', $this->authRole(Role::AllContrib), function() use ($app)
 			{
