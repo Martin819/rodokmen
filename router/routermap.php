@@ -10,14 +10,14 @@ class RouterMap extends RouterBase
 	{
 		$self = $this;
 
-		$app->get('/map', $this->authRole(Role::AllMembers, true), function() use ($app)
+		$app->get('/map', $this->authRole(Role::Member, true), function() use ($app)
 		{
 			$app->render('map.html');
 		})->name('map');
 
 		$app->group('/ajax', $this->checkAjax(), function () use ($app, $self)
 		{
-			$app->get('/places', $self->authRole(Role::AllMembers), $self->contentJson(), function() use ($app)
+			$app->get('/places', $self->authRole(Role::Member), $self->contentJson(), function() use ($app)
 			{
 				$places = new Place();
 				echo $places->toJson();

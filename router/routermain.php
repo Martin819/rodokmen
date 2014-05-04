@@ -10,14 +10,14 @@ class RouterMain extends RouterBase
 	{
 		// Main routes:
 
-		$app->get('/', $this->authRole(Role::AllMembers, true), function() use ($app)
+		$app->get('/', $this->authRole(Role::Member, true), function() use ($app)
 		{
 			$app->render('home.html');
 		})->name('home');
 
 		$app->get('/login', function() use ($app)
 		{
-			//FIXME: already logged in → redirect
+			if ($app->user()->roleMatches(Role::Member)) $app->redirect($app->urlFor('home'));
 			$app->render('login.html');
 		})->name('login');
 		$app->post('/login', function() use ($app)

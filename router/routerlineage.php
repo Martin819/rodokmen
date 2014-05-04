@@ -14,7 +14,7 @@ class RouterLineage extends RouterBase
 		$app->group('/ajax', $this->checkAjax(), function () use ($app, $self)
 		{
 			// Linage JSON route:
-			$app->get('/lineage', $self->authRole(Role::AllMembers), $self->contentJson(), function() use ($app)
+			$app->get('/lineage', $self->authRole(Role::Member), $self->contentJson(), function() use ($app)
 			{
 				$l = new Lineage();
 				echo $l->toJson();   // JSON representation to display using Cytoscape
@@ -22,7 +22,7 @@ class RouterLineage extends RouterBase
 
 
 			// Person details for sidebar:
-			$app->get('/person/:id', $self->authRole(Role::AllMembers), function($id) use ($app)
+			$app->get('/person/:id', $self->authRole(Role::Member), function($id) use ($app)
 			{
 				$bean = RouterBase::getBean($id, new Person(), $app);
 				$app->view->setData($bean->sidebarData());
@@ -30,14 +30,14 @@ class RouterLineage extends RouterBase
 			});
 
 			// Edit existing person:
-			$app->get('/person/edit/:id', $self->authRole(Role::AllContrib), function($id) use ($app)
+			$app->get('/person/edit/:id', $self->authRole(Role::Contrib), function($id) use ($app)
 			{
 				$bean = RouterBase::getBean($id, new Person(), $app);
 				$app->view->setData($bean->infoData());
 				$app->view->setData('action', $app->urlFor('person-edit-p'));
 				$app->render('ajax/form-tree-person.html');
 			})->name('person-edit');
-			$app->post('/person/edit', $self->authRole(Role::AllContrib), function() use ($app)
+			$app->post('/person/edit', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				$rq = $app->request;
 				$person = new Person();
@@ -48,7 +48,7 @@ class RouterLineage extends RouterBase
 			})->name('person-edit-p');
 
 			// Delete a person:
-			$app->get('/person/delete/:id', $self->authRole(Role::AllContrib), function($id) use ($app)
+			$app->get('/person/delete/:id', $self->authRole(Role::Contrib), function($id) use ($app)
 			{
 				$bean = RouterBase::getBean($id, new Person(), $app);
 				$app->view->setData(array(
@@ -58,7 +58,7 @@ class RouterLineage extends RouterBase
 				));
 				$app->render('ajax/form-tree-delete.html');
 			})->name('person-delete');
-			$app->post('/person/delete', $self->authRole(Role::AllContrib), function() use ($app)
+			$app->post('/person/delete', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				$p = RouterBase::getBean($app->request->post('rdk_id'), new Person(), $app);
 				$delbeans = $p->deleteBeans();
@@ -72,7 +72,7 @@ class RouterLineage extends RouterBase
 
 
 			// Marriage details for sidebar
-			$app->get('/marriage/:id', $self->authRole(Role::AllMembers), function($id) use ($app)
+			$app->get('/marriage/:id', $self->authRole(Role::Member), function($id) use ($app)
 			{
 				$bean = RouterBase::getBean($id, new Marriage(), $app);
 				$app->view->setData($bean->sidebarData());
@@ -82,14 +82,14 @@ class RouterLineage extends RouterBase
 			// TODO: edit marriage
 
 			// Add a new child to a marriage
-			$app->get('/marriage/newchild/:id', $self->authRole(Role::AllContrib), function($id) use ($app)
+			$app->get('/marriage/newchild/:id', $self->authRole(Role::Contrib), function($id) use ($app)
 			{
 				$bean = RouterBase::getBean($id, new Marriage(), $app);
 				$app->view->setData('id', $id);
 				$app->view->setData('action', $app->urlFor('marriage-newchild-p'));
 				$app->render('ajax/form-tree-person.html');
 			})->name('marriage-newchild');
-			$app->post('/marriage/newchild', $self->authRole(Role::AllContrib), function() use ($app)
+			$app->post('/marriage/newchild', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				DB::transaction(DB::data, function() use ($app)
 				{
@@ -111,13 +111,13 @@ class RouterLineage extends RouterBase
 			})->name('marriage-newchild-p');
 
 			// New marriage w/ person
-			$app->get('/marriage/new/withperson/:id', $self->authRole(Role::AllContrib), function($id) use ($app)
+			$app->get('/marriage/new/withperson/:id', $self->authRole(Role::Contrib), function($id) use ($app)
 			{
 				$app->view->setData('id', $id);
 				$app->view->setData('action', $app->urlFor('marriage-new-withperson-p'));
 				$app->render('ajax/form-tree-person.html');
 			})->name('marriage-new-withperson');
-			$app->post('/marriage/new/withperson', $self->authRole(Role::AllContrib), function() use ($app)
+			$app->post('/marriage/new/withperson', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				// FIXME: log
 				DB::transaction(DB::data, function() use ($app)
@@ -144,13 +144,13 @@ class RouterLineage extends RouterBase
 			})->name('marriage-new-withperson-p');
 
 			// New parent marriage for a child
-			$app->get('/marriage/new/forchild/:id', $self->authRole(Role::AllContrib), function($id) use ($app)
+			$app->get('/marriage/new/forchild/:id', $self->authRole(Role::Contrib), function($id) use ($app)
 			{
 				$app->view->setData('id', $id);
 				$app->view->setData('action', $app->urlFor('marriage-new-forchild-p'));
 				$app->render('ajax/form-tree-parents.html');
 			})->name('marriage-new-forchild');
-			$app->post('/marriage/new/forchild', $self->authRole(Role::AllContrib), function() use ($app)
+			$app->post('/marriage/new/forchild', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				DB::transaction(DB::data, function() use ($app)
 				{
@@ -183,7 +183,7 @@ class RouterLineage extends RouterBase
 			})->name('marriage-new-forchild-p');
 
 			// Delete a marriage:
-			$app->get('/marriage/delete/:id', $self->authRole(Role::AllContrib), function($id) use ($app)
+			$app->get('/marriage/delete/:id', $self->authRole(Role::Contrib), function($id) use ($app)
 			{
 				$bean = RouterBase::getBean($id, new Marriage(), $app);
 				$app->view->setData(array(
@@ -193,7 +193,7 @@ class RouterLineage extends RouterBase
 				));
 				$app->render('ajax/form-tree-delete.html');
 			})->name('marriage-delete');
-			$app->post('/marriage/delete', $self->authRole(Role::AllContrib), function() use ($app)
+			$app->post('/marriage/delete', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				$m = RouterBase::getBean($app->request->post('rdk_id'), new Marriage(), $app);
 				$delbeans = $m->deleteBeans();

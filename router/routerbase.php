@@ -93,7 +93,7 @@ abstract class RouterBase
 
 		// Setup common settings:
 		$app->view->setData('username', $app->user()->username());
-		$app->view->setData('contrib', $app->user()->roleMatches(Role::AllContrib));
+		$app->view->setData('contrib', $app->user()->roleMatches(Role::Contrib));
 		$app->view->setData('admin', $app->user()->roleMatches(Role::Admin));
 		$app->view->setData('ajs', 'javascript:void(0)');
 		header_remove('X-Powered-By');

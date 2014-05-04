@@ -6,15 +6,10 @@ use \PBKDF2;
 
 abstract class Role
 {
-	const Anon    = 0x1;
-	const Viewer  = 0x2;
-	const Contrib = 0x4;
-	const Admin   = 0x8;
-
-	const All        = 0xffff;
-	const AllMembers = 0xe;
-	const AllContrib = 0xc;
-	// Expressions in const initialization? Don't be silly. This is PHP. Not sanity.
+	const Anon    = 0;
+	const Member  = 1;
+	const Contrib = 2;
+	const Admin   = 3;
 }
 
 abstract class UserBase
@@ -35,7 +30,9 @@ abstract class UserBase
 		$this->session->delete();
 	}
 
+	abstract public function role();
 	abstract public function roleMatches($role);
+	abstract public function id();
 	abstract public function username();
 }
 
@@ -58,30 +55,19 @@ class StaticAdmin extends UserBase
 		else return false;
 	}
 
-	public function roleMatches($role)
-	{
-		return !!($role & Role::Admin);
-	}
-
-	public function username()
-	{
-		return self::username;
-	}
+	public function role() { return Role::Admin; }
+	public function roleMatches($role) { return Role::Admin >= $role; }
+	public function id() { return 0; }
+	public function username() { return self::username; }
 }
 
 class AnonUser extends UserBase
 {
 	public function login($pw) {}
-
-	public function roleMatches($role)
-	{
-		return !!($role & Role::Anon);
-	}
-
-	public function username()
-	{
-		return '<anonymous>';
-	}
+	public function role() { return Role::Anon; }
+	public function roleMatches($role) { return Role::Anon >= $role; }
+	public function id() { return -1; }
+	public function username() { return '<anonymous>'; }
 }
 
 class User extends UserBase
@@ -90,7 +76,7 @@ class User extends UserBase
 
 	private $bean;
 
-	private function __construct(\RedBean_OODBBean $bean, $session = false)
+	private function __construct($bean, $session = false)
 	{
 		$this->bean = $bean;
 		$this->session = $session;
@@ -131,6 +117,16 @@ class User extends UserBase
 		}
 	}
 
+	static public function findAll()
+	{
+		$ret = array();
+		$ret[] = new StaticAdmin();
+		Db::useAuth();
+		$all = R::findAll(self::bean);
+		foreach ($all as $bean) $ret[] = new User($bean);
+		return $ret;
+	}
+
 	static public function setupNew($username, $role, $password)
 	{
 		Db::useAuth();
@@ -152,14 +148,14 @@ class User extends UserBase
 		else return false;
 	}
 
-	public function roleMatches($role)
+	public function role() { return $this->bean->role; }
+	public function roleMatches($role) { return $this->bean->role >= $role; }
+
+	public function id()
 	{
-		// FIXME
-		return !!($this->bean->role & $role);
+		$id = $this->bean->id;
+		return  $id > 0 ? $id : -1;  // So that new beans are not confused with admin
 	}
 
-	public function username()
-	{
-		return $this->bean->username;
-	}
+	public function username() { return $this->bean->username; }
 }
