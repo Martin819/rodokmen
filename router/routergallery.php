@@ -49,7 +49,6 @@ class RouterGallery extends RouterBase
 					'action' => $app->urlFor('gallery-edit-p')
 				));
 				$action = $app->urlFor('gallery-edit-p');
-				error_log("action = $action");
 				$app->render('ajax/form-gallery-edit.html');
 			})->name('gallery-edit');
 			$app->post('/gallery/edit-p', $this->authRole(Role::AllContrib), function() use ($app)

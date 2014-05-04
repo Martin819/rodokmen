@@ -127,13 +127,14 @@
 			{
 				$(this).mask($(this).data('mask'));
 			});
+			$('.nominatim').each(function() { $(this).nominatim(); });
 			$('.vex .focus').focus();
 		})
 		.fail(rdk.ajaxError())
 		.always(function() { rdk.spinnerOn(false); });
 	}
 
-	rdk.submitForm = function($vex, $form, alwayscb)
+	rdk.submitForm = function($vex, $form)
 	{
 		$form.ajaxSubmit();
 		var xhr = $form.data('jqxhr');
@@ -143,6 +144,53 @@
 
 		xhr.fail(rdk.ajaxError('post'));
 		return xhr;
+	}
+
+
+	// Location search field
+
+	$.fn.nominatim = function()
+	{
+		this.select2(
+		{
+			placeholder: "Vyhledat místo...",
+			multiple: true,
+			minimumInputLength: 1,
+			maximumSelectionSize: 1,
+			ajax:
+			{
+				url: "http://nominatim.openstreetmap.org/search",
+				type: "GET",
+				dataType: 'json',
+				quietMillis: 500,
+				data: function (term)
+				{
+					return { q: term, format: 'json' };
+				},
+				results: function (data)
+				{
+					return {
+						results: $.map(data, function(p, i)
+						{
+							return { id: i, text: p.display_name, lon: p.lon, lat: p.lat };
+						})
+					};
+				}
+			},
+			initSelection: function(e, cb)
+			{
+				cb([{ id: 0, text: e.val() }]);
+			}
+		});
+
+		var input_id = this.data('input');
+		this.after('<input type="hidden" name="'+input_id+'" id="'+input_id+'" value="" />');
+		var input = $('#'+input_id);
+		this.on('change', function(e)
+		{
+			if (e.added) input.val(JSON.stringify(e.added));
+			else if (e.removed) input.val('{"removed": true}');
+		})
 	}
 
 

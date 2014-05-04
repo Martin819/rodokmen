@@ -14,8 +14,11 @@
 			rdk.baseUrl = '{{ baseUrl() }}';
 			rdk.strings =
 			{
-				ajaxErrMsg: { get: 'Chyba při načítání dat', post: 'Chyba při odesílání dat' }
+				ajaxErrMsg: { get: 'Chyba při načítání dat', post: 'Chyba při odesílání dat' },
+				mapPopup:
+				{
+					'birth': 'Zde se narodili:'
+				}
 			};
 		}(window.rdk = window.rdk || {}, jQuery));
 	</script>
-{#	{% include 'jsstrings.html' %}  #}

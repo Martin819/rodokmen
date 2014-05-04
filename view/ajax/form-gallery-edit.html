@@ -1,6 +1,5 @@
 <form action="{{action}}" method="post" {% if upload %}enctype="multipart/form-data"{% endif %} class="vex-dialog-form">
 	{% if bean %}<input type="hidden" name="rdk_id" value="{{bean.id}}" />{% endif %}
-	<div class="vex-dialog-input">
 		{% if upload %}
 			{# TODO: MAX_FILE_SIZE as per http://www.php.net/manual/en/features.file-upload.post-method.php #}
 			<div class="vex-input-field">
@@ -16,7 +15,6 @@
 			<label for="rdk_comment">Komentář</label>
 			<textarea name="rdk_comment" class="vex-dialog-input" rows="3">{{bean.comment}}</textarea>
 		</div>
-	</div>
 	<div class="vex-dialog-buttons">
 		<input type="submit" value="Uložit" class="js-formsubmit vex-dialog-button-primary vex-dialog-button" />
 		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />

@@ -12,6 +12,31 @@ class ModelPerson extends \RedBean_SimpleModel
 {
 	private $_name_new;
 
+	private function edit_place($json, $type)
+	{
+		$place = \reset($this->bean->withCondition('type = ?', array($type))->xownPlaceList);
+		if (isset($json->removed) && $json->removed && $place)
+		{
+			unset($this->bean->xownPlaceList[$place->id]);
+		} else
+		if (isset($json->text) && isset($json->lon) && isset($json->lat))
+		{
+			$pod = new Place();
+			$bean = $place ? $place : $pod->setupNew();
+			$bean->name = $json->text;
+			$bean->lon = $json->lon;
+			$bean->lat = $json->lat;
+			$bean->type = $type;
+			if (!$place) $this->bean->xownPlaceList[] = $bean;
+		}
+	}
+
+	private function place($type)
+	{
+		$place = \reset($this->bean->withCondition('type = ?', array($type))->xownPlaceList);
+		return $place ? $place->name : '';
+	}
+
 	public static function makeLinks($persons)
 	{
 		$ret = array();
@@ -22,10 +47,13 @@ class ModelPerson extends \RedBean_SimpleModel
 	public function dispense()
 	{
 		$this->_name_new = R::dispense('name');
-		$this->bean->via('relation');
+		$this->bean->via('relation')->sharedMarriageList;
 	}
 
-	public function open() { $this->bean->via('relation'); }
+	public function open()
+	{
+		$this->bean->via('relation')->sharedMarriageList;
+	}
 
 
 	public function relations($role = false)
@@ -48,7 +76,7 @@ class ModelPerson extends \RedBean_SimpleModel
 		return \array_values($this->bean->xownNameList);
 	}
 
-	public function setNames($first, $last)
+	public function setNames($first, $last)  // TODO: private?
 	{
 		// For now, only one name is supported
 		if (count($this->bean->xownNameList) == 0)
@@ -130,7 +158,8 @@ class ModelPerson extends \RedBean_SimpleModel
 			'id' => $this->bean->id,
 			'dname' => $this->displayName(),
 			'name' => $name,
-			'birth_date' => dateFromIso($this->birth_date)
+			'birth_date' => dateFromIso($this->birth_date),
+			'birth_place' => $this->place(Place::TypeBirth)
 		);
 
 		return $ret;
@@ -168,11 +197,14 @@ class ModelPerson extends \RedBean_SimpleModel
 		$this->setNames($rq->post('rdk_firstname'), $rq->post('rdk_lastname'));
 
 		$birth_date = $rq->post('rdk_birth_date');
-		if (!empty($birth_date))
+		if ($birth_date)
 		{
 			$date = dateToIso($birth_date);
 			if ($date) $this->birth_date = $date;
 		} else unset($this->birth_date);
+
+		$birth_place = \json_decode($rq->post('rdk_birth_place'));
+		if ($birth_place) $this->edit_place($birth_place, Place::TypeBirth);
 	}
 
 	public function canBeDeleted()

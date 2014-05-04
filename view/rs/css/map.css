@@ -1,0 +1,18 @@
+
+#map
+{
+	color: #000;
+	overflow: hidden;
+}
+
+#map h3
+{
+	margin: 5px 0;
+}
+
+#map ul
+{
+	list-style-type: none;
+	margin: 5px 0;
+	padding-left: 15px;
+}

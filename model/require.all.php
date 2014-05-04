@@ -32,9 +32,11 @@ require __DIR__.'/marriage.php';
 require __DIR__.'/relation.php';
 require __DIR__.'/lineage.php';
 require __DIR__.'/media.php';
+require __DIR__.'/place.php';
 
 // Router
 require __DIR__.'/../router/routerbase.php';
 require __DIR__.'/../router/routermain.php';
 require __DIR__.'/../router/routerlineage.php';
 require __DIR__.'/../router/routergallery.php';
+require __DIR__.'/../router/routermap.php';

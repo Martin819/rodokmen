@@ -81,26 +81,29 @@
 
 .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input
 {
-	margin-bottom: 1em;
+	margin-bottom: 5px;
 }
 
-.vex.vex-theme-plain .vex-dialog-form .vex-dialog-input textarea, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="date"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="datetime"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="datetime-local"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="email"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="month"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="number"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="password"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="search"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="tel"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="text"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="time"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="url"], .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="week"]
+.vex.vex-theme-plain .vex-dialog-input
 {
 	background: #f0f0f0;
+	font-size: 1.1em;
 	width: 70%;
 	padding: 0.25em 0.67em;
 	border: 0;
-	font-family: inherit;
-	font-weight: inherit;
-	font-size: inherit;
 	min-height: 2em;
 	margin: 0 0 0.25em;
 }
 
-.vex.vex-theme-plain .vex-dialog-form .vex-dialog-input textarea:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="date"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="datetime"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="datetime-local"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="email"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="month"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="number"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="password"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="search"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="tel"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="text"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="time"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="url"]:focus, .vex.vex-theme-plain .vex-dialog-form .vex-dialog-input input[type="week"]:focus
+.vex.vex-theme-plain .nominatim
+{
+	font-size: .9em;
+}
+
+.vex.vex-theme-plain .vex-dialog-input:focus
 {
 	color: #004266;
-	outline: #004266 solid 2px;
+	outline: #004266 solid 1px;
 }
 
 .vex.vex-theme-plain .vex-dialog-buttons
@@ -133,7 +136,7 @@
 
 .vex.vex-theme-plain .vex-dialog-button:focus
 {
-	outline: none;
+	outline: 0;
 }
 
 .vex.vex-theme-plain .vex-dialog-button.vex-dialog-button-primary

@@ -110,15 +110,20 @@ body.login
 #menubar .menuitem:first-child { border: none; }
 
 
-#cy
+.screen
 {
 	background-color: #1a1a1a;
 	background-image: url('stressed-linen.png');
 	position: absolute;
 	top: 30px;
 	left: 0;
-	right: 380px;
+	right: 0;
 	bottom: 0;
+}
+
+#cy
+{
+	right: 380px;
 	overflow: hidden;
 }
 

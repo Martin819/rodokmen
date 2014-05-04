@@ -1,0 +1,20 @@
+{% include 'header.html' %}
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/map.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex-theme-plain-mod.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/leaflet.css" />
+	<script language="javascript" type="text/javascript" src="rs/lib/raphael.min.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/lib/vex.combined.min.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/lib/leaflet.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/utils.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/map.js"></script>
+	<script language="javascript" type="text/javascript">
+		vex.defaultOptions.className = 'vex-theme-plain';
+	</script>
+</head>
+<body>
+	<div id="spinner"></div>
+	{% include 'menubar.html' %}
+	<div id="map" class="screen shadow-top"></div>
+</body>
+</html>
