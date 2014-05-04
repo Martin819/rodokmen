@@ -40,3 +40,4 @@ require __DIR__.'/../router/routermain.php';
 require __DIR__.'/../router/routerlineage.php';
 require __DIR__.'/../router/routergallery.php';
 require __DIR__.'/../router/routermap.php';
+require __DIR__.'/../router/routeradmin.php';

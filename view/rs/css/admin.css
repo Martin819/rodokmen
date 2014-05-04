@@ -1,0 +1,35 @@
+
+#admin
+{
+	padding: 15px;
+}
+
+#admin-menu
+{
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+#admin .tab
+{
+	width: 100%;
+	display: none;
+}
+
+#admin .tab-control.tab-active a
+{
+	text-decoration: underline;;
+}
+
+#admin #adduser
+{
+	width: 100%;
+	height: 30px;
+}
+
+#admin table
+{
+	width: 80%;
+	margin: 0 10%;
+	text-align: left;
+}

@@ -7,7 +7,7 @@
 	</div>
 	<div class="menublock" id="user">
 		<span class="menuitem">{{username}}</span>{#
-		#}<span class="menuitem"><a href="{{ajs}}">Nastavení</a></span>{#
+		#}<span class="menuitem"><a href="{% if admin %}{{urlFor('admin')}}{% else %}{{ajs}}{% endif %}">Nastavení</a></span>{#
 		#}<span class="menuitem"><a href="{{urlFor('logout')}}">Odhlásit</a></span>
 	</div>
 </div>

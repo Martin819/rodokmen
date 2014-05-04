@@ -1,0 +1,53 @@
+{% set roleNames = [ 'Žádné', 'Prohlížení', 'Úprava dat', 'Administrace' ] %}
+{% include 'header.html' %}
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/main.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/admin.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex-theme-plain-mod.css" />
+	<script language="javascript" type="text/javascript" src="rs/lib/jquery.form.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/lib/raphael.min.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/lib/vex.combined.min.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/utils.js"></script>
+	<script language="javascript" type="text/javascript" src="rs/admin.js"></script>
+	<script language="javascript" type="text/javascript">
+		vex.defaultOptions.className = 'vex-theme-plain';
+	</script>
+</head>
+<body>
+	<div id="spinner"></div>
+
+	{% include 'menubar.html' %}
+	<div id="admin" class="screen shadow-top">
+		<div id="admin-menu">
+			<span class="menuitem tab-control {# tab-default #}" data-tab="#settings"><a href="{{ajs}}">Nastavení</a></span>
+			<span class="menuitem tab-control tab-default" data-tab="#users"><a href="{{ajs}}">Uživatelé</a></span>
+			<span class="menuitem tab-control" data-tab="#log"><a href="{{ajs}}">Log</a></span>
+		</div>
+		<div id="settings" class="tab">
+			Nastavení
+		</div>
+		<div id="users" class="tab">
+			<div id="adduser">
+				<div class="right">
+					<a href="{{ajs}}" class="js-openform button" data-title="Přidat uživatele">Přidat uživatele</a>
+				</div>
+			</div>
+			<table>
+				<tr><th>ID</th><th>Jméno</th><th>Oprávnění</th><th>&nbsp;</th></tr>
+				{% for user in users %}
+					<tr>
+						<td>{{user.id}}</td><td>{{user.username}}</td><td>{{roleNames[user.role]}}</td>
+						<td><a href="{{ajs}}" class="button small">upravit</a>{#
+							#}{% if user.id > 0 %}&nbsp;&nbsp;{#
+							#}<a href="{{ajs}}" class="button small">smazat</a>{#
+							#}{% endif %}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<div id="log" class="tab">
+			Log
+		</div>
+	</div>
+</body>
+</html>
