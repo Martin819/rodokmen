@@ -8,22 +8,16 @@ abstract class RouterBase
 
 	private $app;
 
-	private function check_https()
-	{
-		// FIXME: use this
-		if ($this->app->environment['Rodokmen.force_https'] && $this->app->environment['slim.url_scheme'] != 'https')
-			$this->app->redirect('https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], 301); // FIXME: use request url
-	}
 
-
-	protected static function getBean($id, $pod, $app)
+	// NOTE: Compatibility hack: these function are public because PHP 5.3 doesn't suppor $this in closures
+	public static function getBean($id, $pod, $app)
 	{
 		$bean = $pod->fromId($id);
 		if (!$bean) $app->halt(404);
 		else return $bean;
 	}
 
-	protected function authRole($role, $redir = false)
+	public function authRole($role, $redir = false)
 	{
 		$app = $this->app;
 		return function() use ($app, $role, $redir)
@@ -39,7 +33,7 @@ abstract class RouterBase
 		};
 	}
 
-	protected function checkAjax()
+	public function checkAjax()
 	{
 		$app = $this->app;
 		return function() use ($app)
@@ -48,7 +42,7 @@ abstract class RouterBase
 		};
 	}
 
-	protected function contentJson()
+	public function contentJson()
 	{
 		$app = $this->app;
 		return function() use ($app)
@@ -57,7 +51,7 @@ abstract class RouterBase
 		};
 	}
 
-	protected function downloadFile($filename)
+	public function downloadFile($filename)
 	{
 		\header('Content-Description: File Transfer');
 		\header('Content-Type: application/octet-stream');
@@ -71,6 +65,7 @@ abstract class RouterBase
 		\readfile($filename);
 		exit;
 	}
+	// Compatibility hack end
 
 	abstract public function setup($app);
 

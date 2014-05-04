@@ -20,6 +20,16 @@ class App extends Slim\Slim
 	private $config;
 	private $usr;
 
+	private function check_https()
+	{
+		if ($this->config('mode') == 'production' && $this->environment['slim.url_scheme'] != 'https')
+		{
+			// Can't use $app->redirect, $app is not constructed nor running yet
+			\header('Location: https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+			exit();
+		}
+	}
+
 	// private function get_locale()
 	// {
 	// 	// TODO: detect based on the Accept-Language header
@@ -58,9 +68,11 @@ class App extends Slim\Slim
 
 	private function setup_modes()
 	{
-		$this->configureMode('development', function ()
+		$self = $this;
+
+		$this->configureMode('development', function () use ($self)
 		{
-			$this->config(array
+			$self->config(array
 			(
 				'log.enabled' => true,
 				'log.level' => \Slim\Log::DEBUG,
@@ -68,15 +80,14 @@ class App extends Slim\Slim
 			));
 		});
 
-		$this->configureMode('production', function ()
+		$this->configureMode('production', function () use ($self)
 		{
-			$this->config(array
+			$self->config(array
 			(
 				'log.enabled' => true,
 				'log.level' => \Slim\Log::NOTICE,
 				'debug' => false
 			));
-			$this->environment['Rodokmen.force_https'] = true;
 		});
 	}
 
@@ -101,6 +112,8 @@ class App extends Slim\Slim
 		$this->setup_twig();
 		$this->setup_db();
 		$this->setup_modes();
+
+		$this->check_https();
 
 		$this->usr = User::fromSession();
 	}
