@@ -159,7 +159,7 @@
 			maximumSelectionSize: 1,
 			ajax:
 			{
-				url: "http://nominatim.openstreetmap.org/search",
+				url: rdk.nominatimServer,
 				type: "GET",
 				dataType: 'json',
 				quietMillis: 500,

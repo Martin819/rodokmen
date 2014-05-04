@@ -82,6 +82,7 @@
 .vex.vex-theme-plain .vex-dialog-form .vex-dialog-edit
 {
 	background: #f0f0f0;
+	font-family: inherit;
 	font-size: 1.1em;
 	width: 70%;
 	min-height: 2em;

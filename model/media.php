@@ -118,7 +118,7 @@ class ModelMedia extends \RedBean_SimpleModel
 	public function edit($rq)
 	{
 		$year = $rq->post('rdk_year');
-		if (!\preg_match('/\d{4}/', $year)) return false;  // FIXME: check integer with native function
+		if (!\preg_match('/^-?[1-9][0-9]*$/D', $year)) return false;
 		$this->year = intval($year);
 
 		$this->comment = $rq->post('rdk_comment');

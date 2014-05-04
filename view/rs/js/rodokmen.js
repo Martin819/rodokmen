@@ -106,19 +106,16 @@
 		$('#cy').cytoscape(
 		{
 			layout: { name: 'rodokmen' },
-			// layout: { name: 'breadthfirst' },
 
 			renderer:
 			{
 				name: 'raphael',
 				multiSelect: false,
 			},
-			// renderer: { name: 'canvas' },
 
 			style: cytoscape.stylesheet()
 				.selector('node.p')
 					.css({
-						// 'background-color': '#239DF3',
 						'background-color': '#006280',
 						'shape': 'roundrectangle',
 						'width': 50,
@@ -126,7 +123,6 @@
 						'content': 'data(name)',
 						'text-valign': 'center',
 						'text-outline-width': 0,
-						// 'text-outline-color': '#000000',
 						'color': '#fff',
 						'font-size': 15,
 						'font-weight': 'bold',
@@ -134,9 +130,7 @@
 					})
 				.selector('node.m')
 					.css({
-						// 'background-color': '#239DF3',
 						'background-color': '#006280',
-						// 'background-color': 'red',
 						'content': '',
 						'shape': 'circle',
 						'width': 20,
@@ -149,15 +143,10 @@
 				.selector('edge')
 					.css({
 						'curve-style': 'bezier',
-						// 'curve-style': 'haystack',
 						'width': 2,
 						'target-arrow-shape': 'none',
-						// 'target-arrow-shape': 'triangle',
 						'source-arrow-shape': 'none',
-						// 'line-color': '#239DF3',
 						'line-color': '#006280',
-						// 'source-arrow-color': 'data(faveColor)',
-						// 'target-arrow-color': 'data(faveColor)'
 					})
 				.selector('edge.questionable')
 					.css({
@@ -175,12 +164,8 @@
 			ready: function(e)
 			{
 				window.cy = e.cy;
-
 				this.boxSelectionEnabled(false);
-
-				// this.zoom(1.5);
 				loadLineage();
-
 				// giddy up
 			}
 		});

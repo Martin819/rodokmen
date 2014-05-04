@@ -12,13 +12,22 @@
 		(function(rdk, $, undefined)
 		{
 			rdk.baseUrl = '{{ baseUrl() }}';
+
 			rdk.strings =
 			{
-				ajaxErrMsg: { get: 'Chyba při načítání dat', post: 'Chyba při odesílání dat' },
+				ajaxErrMsg:
+				{
+					get: 'Chyba při načítání dat',
+					post: 'Chyba při odesílání dat'
+				},
 				mapPopup:
 				{
-					'birth': 'Zde se narodili:'
-				}
+					birth: 'Zde se narodili:'
+				},
 			};
+
+			rdk.nominatimServer = location.protocol+'//nominatim.openstreetmap.org/search';
+			rdk.mapTileServer = 'http://otile3.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
+			rdk.mapAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">';
 		}(window.rdk = window.rdk || {}, jQuery));
 	</script>

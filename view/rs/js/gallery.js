@@ -28,8 +28,10 @@
 			var xhr = rdk.submitForm($vex, $t.closest('form'));
 			xhr.success(function()
 			{
-				rdk.spinnerOn(false);
 				vexD.afterClose = function() { location.reload(true); }
+			}).always(function()
+			{
+				rdk.spinnerOn(false);
 				vex.close(vexD.id);
 			});
 		})
