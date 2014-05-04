@@ -4,16 +4,16 @@
 			{# TODO: MAX_FILE_SIZE as per http://www.php.net/manual/en/features.file-upload.post-method.php #}
 			<div class="vex-input-field">
 				<label for="rdk_uploadfile">Soubor</label>
-				<input type="file" name="rdk_uploadfile" class="vex-dialog-input" />
+				<input type="file" name="rdk_uploadfile" class="vex-dialog-edit" />
 			</div>
 		{% endif %}
 		<div class="vex-input-field">
 			<label for="rdk_year">Rok vytvoření</label>
-			<input type="text" name="rdk_year" class="vex-dialog-input" value="{{bean.year}}" />
+			<input type="text" name="rdk_year" class="vex-dialog-edit" value="{{bean.year}}" />
 		</div>
 		<div class="vex-input-field">
 			<label for="rdk_comment">Komentář</label>
-			<textarea name="rdk_comment" class="vex-dialog-input" rows="3">{{bean.comment}}</textarea>
+			<textarea name="rdk_comment" class="vex-dialog-edit" rows="3">{{bean.comment}}</textarea>
 		</div>
 	<div class="vex-dialog-buttons">
 		<input type="submit" value="Uložit" class="js-formsubmit vex-dialog-button-primary vex-dialog-button" />
