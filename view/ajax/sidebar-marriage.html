@@ -10,7 +10,7 @@
 	{% if contrib %}
 		<div class="center">
 			<a href="{{ajs}}" class="button">upravit údaje</a>
-			<a href="{{urlFor('marriage-delete', {'id': m.id})}}" class="js-openform button" data-title="Smazat">smazat</a>
+			<a href="{{urlFor('marriage-delete', {'id': m.id})}}" class="js-openform button" data-title="Smazat záznam">smazat</a>
 		</div>
 	{% endif %}
 	<ul>
@@ -18,7 +18,7 @@
 			<h3>Děti:</h3>
 			{% if contrib %}
 				<span class="right">
-					<a href="{{urlFor('marriage-newchild', {'id': m.id})}}" class="js-openform button" data-title="Přidat...">přidat</a>
+					<a href="{{urlFor('marriage-newchild', {'id': m.id})}}" class="js-openform button" data-title="Přidat dítě">přidat</a>
 				</span>
 			{% endif %}
 			{% if children %}

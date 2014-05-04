@@ -6,7 +6,7 @@
 		{% if contrib %}
 			<div class="center">
 				<a href="{{urlFor('person-edit', {'id': p.id})}}" class="js-openform button" data-title="Upravit údaje">upravit údaje</a>
-				<a href="{{urlFor('person-delete', {'id': p.id})}}" class="js-openform button" data-title="Smazat">smazat</a>
+				<a href="{{urlFor('person-delete', {'id': p.id})}}" class="js-openform button" data-title="Smazat záznam">smazat</a>
 			</div>
 		{% endif %}
 		<ul>
@@ -31,7 +31,7 @@
 				<h3>Svazky:</h3>
 				{% if contrib %}
 					<span class="right">
-						<a href="{{urlFor('marriage-new-withperson', {'id': p.id})}}" class="js-openform button" data-title="Přidat...">přidat</a>
+						<a href="{{urlFor('marriage-new-withperson', {'id': p.id})}}" class="js-openform button" data-title="Přidat svazek">přidat</a>
 					</span>
 				{% endif %}
 				{% for m in marriages %}
