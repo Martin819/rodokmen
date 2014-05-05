@@ -78,6 +78,9 @@ class ModelPerson extends \RedBean_SimpleModel
 
 	public function setNames($first, $last)  // TODO: private?
 	{
+		if (!\is_string($first) || (strlen($first) == 0) ||
+		    !\is_string($last)  || (strlen($last) == 0)) return false;
+
 		// For now, only one name is supported
 		if (count($this->bean->xownNameList) == 0)
 		{
@@ -89,6 +92,8 @@ class ModelPerson extends \RedBean_SimpleModel
 		}
 		$name->first = $first;
 		$name->last  = $last;
+
+		return true;
 	}
 
 	public function displayName($sep = ' ')
@@ -194,7 +199,7 @@ class ModelPerson extends \RedBean_SimpleModel
 	{
 		$bean = $this->bean;
 
-		$this->setNames($rq->post('rdk_firstname'), $rq->post('rdk_lastname'));
+		if (!$this->setNames($rq->post('rdk_firstname'), $rq->post('rdk_lastname'))) return false;
 
 		$birth_date = $rq->post('rdk_birth_date');
 		if ($birth_date)
@@ -205,6 +210,8 @@ class ModelPerson extends \RedBean_SimpleModel
 
 		$birth_place = \json_decode($rq->post('rdk_birth_place'));
 		if ($birth_place) $this->edit_place($birth_place, Place::TypeBirth);
+
+		return true;
 	}
 
 	public function canBeDeleted()

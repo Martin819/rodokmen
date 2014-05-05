@@ -42,7 +42,7 @@ class RouterLineage extends RouterBase
 				$rq = $app->request;
 				$person = new Person();
 				$bean = RouterBase::getBean($rq->post('rdk_id'), $person, $app);
-				$bean->edit($rq);
+				if (!$bean->edit($rq)) $app->halt(403);
 				$person->store($bean);
 				// FIXME: log
 			})->name('person-edit-p');
@@ -100,7 +100,7 @@ class RouterLineage extends RouterBase
 					$pod_r = new Relation();
 
 					$p = $pod_p->setupNew();
-					$p->edit($rq);
+					if (!$p->edit($rq)) $app->halt(403);
 					$r = $pod_r->relate($p, $m, 'child');
 
 					$pod_p->store($p);
@@ -129,7 +129,7 @@ class RouterLineage extends RouterBase
 
 					$p = RouterBase::getBean($rq->post('rdk_id'), $pod_p, $app);
 					$np = $pod_p->setupNew();
-					$np->edit($rq);
+					if (!$np->edit($rq)) $app->halt(403);
 					$m = $pod_m->setupNew();
 					$r1 = $pod_r->relate($p,  $m, 'parent');
 					$r2 = $pod_r->relate($np, $m, 'parent');
@@ -163,9 +163,9 @@ class RouterLineage extends RouterBase
 					if ($c->parents()) $app->halt(403);  // Checks whether this person already has parents
 
 					$p1 = $pod_p->setupNew();
-					$p1->setNames($rq->post('rdk_p1_firstname'), $rq->post('rdk_p1_lastname'));
+					if (!$p1->setNames($rq->post('rdk_p1_firstname'), $rq->post('rdk_p1_lastname'))) $app->halt(403);
 					$p2 = $pod_p->setupNew();
-					$p2->setNames($rq->post('rdk_p2_firstname'), $rq->post('rdk_p2_lastname'));
+					if (!$p2->setNames($rq->post('rdk_p2_firstname'), $rq->post('rdk_p2_lastname'))) $app->halt(403);
 					$m = $pod_m->setupNew();
 					$rp1 = $pod_r->relate($p1, $m, 'parent');
 					$rp2 = $pod_r->relate($p2, $m, 'parent');
