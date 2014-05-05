@@ -5,6 +5,7 @@ use \Slim;
 
 class LogMiddleware extends \Slim\Middleware
 {
+	//FIXME: wtf is this
 	public function call()
 	{
 		$env = $this->app->environment;
@@ -136,5 +137,27 @@ class App extends Slim\Slim
 	public function conf()
 	{
 		return $this->config;
+	}
+
+	public function logOp($op, $what, $id = false)
+	{
+		if ($id === false)
+		{
+			// If no $id is supplied, assume $what is a bean
+			$id = $what->id;
+			$what = $what->getMeta('type');
+		}
+		$this->log->notice(sprintf("%s %s id: %u", Op::string($op), $what, $id));
+	}
+
+	public function logOpAll($op, $beans)
+	{
+		foreach ($beans as $bean) $this->logOp($op, $bean);
+	}
+
+	public function readLogTail($tailBytes = 524288)  // 0.5MB by default
+	{
+		$writer = $this->log->getWriter();
+		return $writer->tail($tailBytes);
 	}
 };

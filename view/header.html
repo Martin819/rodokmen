@@ -1,3 +1,6 @@
+{% import 'strings.html' as strings %}
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs">
 <head>
@@ -11,21 +14,8 @@
 	<script language="javascript" type="text/javascript">
 		(function(rdk, $, undefined)
 		{
-			rdk.baseUrl = '{{ baseUrl() }}';
-
-			rdk.strings =
-			{
-				ajaxErrMsg:
-				{
-					get: 'Chyba při načítání dat',
-					post: 'Chyba při odesílání dat'
-				},
-				mapPopup:
-				{
-					birth: 'Zde se narodili:'
-				},
-			};
-
+			rdk.baseUrl = '{{baseUrl()}}';
+			rdk.strings = {{strings.jsStrings}};
 			rdk.nominatimServer = location.protocol+'//nominatim.openstreetmap.org/search';
 			rdk.mapTileServer = 'http://otile3.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
 			rdk.mapAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">';

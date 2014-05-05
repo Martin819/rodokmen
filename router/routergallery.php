@@ -32,13 +32,13 @@ class RouterGallery extends RouterBase
 				$app->view->setData('action', $app->urlFor('gallery-upload-p'));
 				$app->render('ajax/form-gallery-edit.html');
 			})->name('gallery-upload');
-			$app->post('/gallery/upload-p', $self->authRole(Role::Contrib), function() use ($app)
+			$app->post('/gallery/upload', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				$media = new Media();
 				$bean = $media->setupNew();
 				if (!$bean->addUpload($app->request)) $app->halt(403);
 				$media->store($bean);
-				// FIXME: log
+				$app->logOp(Op::Create, $bean);
 			})->name('gallery-upload-p');
 
 			// Edit media:
@@ -50,16 +50,15 @@ class RouterGallery extends RouterBase
 					'bean' => $bean,
 					'action' => $app->urlFor('gallery-edit-p')
 				));
-				$action = $app->urlFor('gallery-edit-p');
 				$app->render('ajax/form-gallery-edit.html');
 			})->name('gallery-edit');
-			$app->post('/gallery/edit-p', $self->authRole(Role::Contrib), function() use ($app)
+			$app->post('/gallery/edit', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				$media = new Media();
 				$bean = RouterBase::getBean($app->request->post('rdk_id'), $media, $app);
 				if (!$bean->edit($app->request)) $app->halt(403);
 				$media->store($bean);
-				// FIXME: log
+				$app->logOp(Op::Update, $bean);
 			})->name('gallery-edit-p');
 
 			// Delete media:
@@ -70,12 +69,12 @@ class RouterGallery extends RouterBase
 				$app->view->setData('action', $app->urlFor('gallery-delete-p'));
 				$app->render('ajax/form-gallery-delete.html');
 			})->name('gallery-delete');
-			$app->post('/gallery/delete-p', $self->authRole(Role::Contrib), function() use ($app)
+			$app->post('/gallery/delete', $self->authRole(Role::Contrib), function() use ($app)
 			{
 				$media = new Media();
 				$bean = RouterBase::getBean($app->request->post('rdk_id'), $media, $app);
+				$app->logOp(Op::Delete, $bean);
 				$media->trash($bean);
-				// FIXME: log
 			})->name('gallery-delete-p');
 		});
 	}

@@ -11,7 +11,7 @@
 			$($(this).data('tab')).show();
 		});
 
-		$('#gallery .js-openform').click(function(e)
+		$('#admin .js-openform').click(function(e)
 		{
 			e.preventDefault();
 			$t = $(this);

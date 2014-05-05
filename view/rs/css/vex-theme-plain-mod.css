@@ -103,6 +103,12 @@
 	outline: #004266 solid 1px;
 }
 
+.vex.vex-theme-plain .vex-dialog-form .vex-dialog-radiobox
+{
+	display: inline-block;
+	font-size: 1em;
+}
+
 .vex.vex-theme-plain .vex-dialog-buttons
 {
 	position: absolute;

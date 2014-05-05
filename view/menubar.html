@@ -7,7 +7,24 @@
 	</div>
 	<div class="menublock" id="user">
 		<span class="menuitem">{{username}}</span>{#
-		#}<span class="menuitem"><a href="{% if admin %}{{urlFor('admin')}}{% else %}{{ajs}}{% endif %}">Nastavení</a></span>{#
+		#}{% if contrib %}{#
+			#}<span class="menuitem">{#
+				#}{% if admin %}<a href="{{urlFor('admin')}}">Administrace</a>{#
+				#}{% else %}<a href="{{urlFor('admin-user-changepw')}}" class="js-openform-menubar" data-title="Změna hesla">Nastavení</a>{#
+				#}{% endif %}{#
+			#}</span>{#
+		#}{% endif %}{#
 		#}<span class="menuitem"><a href="{{urlFor('logout')}}">Odhlásit</a></span>
 	</div>
 </div>
+<script language="javascript" type="text/javascript">
+	(function(rdk, $, undefined)
+	{
+		$('.js-openform-menubar').click(function(e)
+		{
+			e.preventDefault();
+			$t = $(this);
+			rdk.openForm($t.data('title'), $t.attr('href'));
+		});
+	}(window.rdk = window.rdk || {}, jQuery));
+</script>

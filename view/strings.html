@@ -1,0 +1,18 @@
+{# Twig strings #}
+
+{% macro roleNames(i) %}{#
+#}{% set arr = [ 'Žádné', 'Prohlížení', 'Úprava dat', 'Administrace' ] %}
+{{arr[i]}}
+{% endmacro %}
+
+{% macro jsStrings() %}{
+	ajaxErrMsg:
+	{
+		get: 'Chyba při načítání dat',
+		post: 'Chyba při odesílání dat'
+	},
+	mapPopup:
+	{
+		birth: 'Zde se narodili:'
+	},
+}{% endmacro %}

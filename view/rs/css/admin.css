@@ -33,3 +33,15 @@
 	margin: 0 10%;
 	text-align: left;
 }
+
+#admin #log
+{
+	height: 90%;
+}
+
+#admin #log textarea
+{
+	font-family: monospace;
+	width: 100%;
+	height: 100%;
+}

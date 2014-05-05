@@ -44,7 +44,7 @@ class RouterLineage extends RouterBase
 				$bean = RouterBase::getBean($rq->post('rdk_id'), $person, $app);
 				if (!$bean->edit($rq)) $app->halt(403);
 				$person->store($bean);
-				// FIXME: log
+				$app->logOp(Op::Update, $bean);
 			})->name('person-edit-p');
 
 			// Delete a person:
@@ -63,10 +63,10 @@ class RouterLineage extends RouterBase
 				$p = RouterBase::getBean($app->request->post('rdk_id'), new Person(), $app);
 				$delbeans = $p->deleteBeans();
 				if (empty($delbeans)) $app->halt(403);
-				else DB::transaction(DB::data, function() use ($delbeans)
+				else DB::transaction(DB::data, function() use ($app, $delbeans)
 				{
+					$app->logOpAll(Op::Delete, $delbeans);
 					R::trashAll($delbeans);
-					// FIXME: log
 				});
 			})->name('person-delete-p');
 
@@ -106,7 +106,8 @@ class RouterLineage extends RouterBase
 					$pod_p->store($p);
 					$pod_r->store($r);
 
-					// FIXME: log
+					$app->logOp(Op::Create, $p);
+					$app->logOp(Op::Create, $r);
 				});
 			})->name('marriage-newchild-p');
 
@@ -119,7 +120,6 @@ class RouterLineage extends RouterBase
 			})->name('marriage-new-withperson');
 			$app->post('/marriage/new/withperson', $self->authRole(Role::Contrib), function() use ($app)
 			{
-				// FIXME: log
 				DB::transaction(DB::data, function() use ($app)
 				{
 					$rq = $app->request;
@@ -139,7 +139,10 @@ class RouterLineage extends RouterBase
 					$pod_r->store($r1);
 					$pod_r->store($r2);
 
-					// FIXME: log
+					$app->logOp(Op::Create, $np);
+					$app->logOp(Op::Create, $m);
+					$app->logOp(Op::Create, $r1);
+					$app->logOp(Op::Create, $r2);
 				});
 			})->name('marriage-new-withperson-p');
 
@@ -178,7 +181,12 @@ class RouterLineage extends RouterBase
 					$pod_r->store($rp2);
 					$pod_r->store($rc);
 
-					// FIXME: log
+					$app->logOp(Op::Create, $p1);
+					$app->logOp(Op::Create, $p2);
+					$app->logOp(Op::Create, $m);
+					$app->logOp(Op::Create, $rp1);
+					$app->logOp(Op::Create, $rp2);
+					$app->logOp(Op::Create, $rc);
 				});
 			})->name('marriage-new-forchild-p');
 
@@ -198,10 +206,10 @@ class RouterLineage extends RouterBase
 				$m = RouterBase::getBean($app->request->post('rdk_id'), new Marriage(), $app);
 				$delbeans = $m->deleteBeans();
 				if (empty($delbeans)) $app->halt(403);
-				else DB::transaction(DB::data, function() use ($delbeans)
+				else DB::transaction(DB::data, function() use ($app, $delbeans)
 				{
+					$app->logOpAll(Op::Delete, $delbeans);
 					R::trashAll($delbeans);
-					// FIXME: log
 				});
 			})->name('marriage-delete-p');
 		});

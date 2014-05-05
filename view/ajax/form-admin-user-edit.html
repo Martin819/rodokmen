@@ -1,0 +1,38 @@
+{% import 'strings.html' as strings %}
+{% set roles = [
+	constant('Rodokmen\\Role::Member'),
+	constant('Rodokmen\\Role::Contrib'),
+	constant('Rodokmen\\Role::Admin')
+] %}
+<form action="{{action}}" method="post" class="vex-dialog-form">
+	{% if user %}<input type="hidden" name="rdk_id" value="{{user.id}}" />{% endif %}
+		<div class="vex-input-field">
+			<label for="rdk_username">Uživatelské jméno</label>
+			<input type="text" name="rdk_username" class="vex-dialog-edit" value="{{user.username}}" />
+		</div>
+		<div class="vex-input-field">
+			<label for="rdk_pw">Heslo</label>
+			<input type="password" name="rdk_pw" class="vex-dialog-edit" value="" {% if user %}placeholder="Prázdné → beze změny"{% endif %} />
+		</div>
+		<div class="vex-input-field">
+			<label for="rdk_pw_verif">Heslo ‒ potvrzení</label>
+			<input type="password" name="rdk_pw_verif" class="vex-dialog-edit" value="" />
+		</div>
+		{% if user.id > 0 or not user %}
+			<div class="vex-input-field">
+				<label>Oprávnění</label>
+				<span class="vex-dialog-edit vex-dialog-radiobox">
+				{% for role in roles %}
+					<div>
+						<input type="radio" name="rdk_role" id="role{{role}}" value="{{role}}" {% if user.role == role %}checked=""{% endif %} />
+						<label for="role{{role}}">{{strings.roleNames(role)}}</label>
+					</div>
+				{% endfor %}
+				</span>
+			</div>
+		{% endif %}
+	<div class="vex-dialog-buttons">
+		<input type="submit" value="Uložit" class="js-formsubmit vex-dialog-button-primary vex-dialog-button" />
+		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+	</div>
+</form>

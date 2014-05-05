@@ -15,11 +15,11 @@ class Config
 
 	private function add_defaults()
 	{
+		$this->opt_default('admin_username', 'admin');
+		$this->opt_default('admin_hash', 'sha256:1::26F9kTf0oY1QAVdms5tN9LJRBOY6ZQaQMOX9v8ivAHk=');  // default pw: "admin"
 		$this->opt_default('db_freeze', false);
 		$this->opt_default('db_auth', '../data/auth.sqlite');
 		$this->opt_default('db_data', '../data/data.sqlite');
-		// TODO: random generated admin salt
-		$this->opt_default('admin_hash', 'sha256:1::26F9kTf0oY1QAVdms5tN9LJRBOY6ZQaQMOX9v8ivAHk=');
 	}
 
 	private function load()

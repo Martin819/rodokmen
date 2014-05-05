@@ -1,0 +1,18 @@
+{% if todelete %}
+<form action="{{action}}" method="post" class="vex-dialog-form">
+	<input type="hidden" name="rdk_id" value="{{user.id}}" />
+	<div>
+		<p>Bude smazán uživatel <strong>{{user.username}}</strong>.</p>
+		<p>Toto nelze vzít zpět. Pokračovat?</p>
+	</div>
+	<div class="vex-dialog-buttons">
+		<input type="submit" value="Pokračovat" class="focus js-formsubmit vex-dialog-button-danger vex-dialog-button" />
+		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+	</div>
+</form>
+{% else %}
+	<p>Nelze smazat aktuálně přihlášeného uživatele.</p>
+	<div class="vex-dialog-buttons">
+		<input type="button" value="Ok" class="focus js-formcancel vex-dialog-button-primary vex-dialog-button" />
+	</div>
+{% endif %}

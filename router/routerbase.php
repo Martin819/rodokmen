@@ -92,10 +92,12 @@ abstract class RouterBase
 		*/
 
 		// Setup common settings:
-		$app->view->setData('username', $app->user()->username());
-		$app->view->setData('contrib', $app->user()->roleMatches(Role::Contrib));
-		$app->view->setData('admin', $app->user()->roleMatches(Role::Admin));
-		$app->view->setData('ajs', 'javascript:void(0)');
+		$app->view->setData(array(
+			'username' => $app->user()->username(),
+			'contrib' => $app->user()->roleMatches(Role::Contrib),
+			'admin' => $app->user()->roleMatches(Role::Admin),
+			'ajs' => 'javascript:void(0)'
+		));
 		header_remove('X-Powered-By');
 		\Slim\Route::setDefaultConditions(array
 		(

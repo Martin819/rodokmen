@@ -114,6 +114,7 @@
 		};
 
 		map.fitBounds(L.latLngBounds(bounds), { maxZoom: 8 });
+		if (map.getZoom() > 3) map.zoomOut(1, { animate: false });
 	}
 
 	function loadPlaces()

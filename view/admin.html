@@ -1,4 +1,4 @@
-{% set roleNames = [ 'Žádné', 'Prohlížení', 'Úprava dat', 'Administrace' ] %}
+{% import 'strings.html' as strings %}
 {% include 'header.html' %}
 	<link rel="stylesheet" type="text/css" media="screen" href="rs/main.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="rs/admin.css" />
@@ -24,29 +24,30 @@
 			<span class="menuitem tab-control" data-tab="#log"><a href="{{ajs}}">Log</a></span>
 		</div>
 		<div id="settings" class="tab">
-			Nastavení
 		</div>
 		<div id="users" class="tab">
 			<div id="adduser">
 				<div class="right">
-					<a href="{{ajs}}" class="js-openform button" data-title="Přidat uživatele">Přidat uživatele</a>
+					<a href="{{urlFor('admin-user-new')}}" class="js-openform button" data-title="Přidat uživatele">Přidat uživatele</a>
 				</div>
 			</div>
 			<table>
-				<tr><th>ID</th><th>Jméno</th><th>Oprávnění</th><th>&nbsp;</th></tr>
+				<tr><th>ID</th><th>Uživatelské jméno</th><th>Oprávnění</th><th>&nbsp;</th></tr>
 				{% for user in users %}
 					<tr>
-						<td>{{user.id}}</td><td>{{user.username}}</td><td>{{roleNames[user.role]}}</td>
-						<td><a href="{{ajs}}" class="button small">upravit</a>{#
+						<td>{{user.id}}</td><td>{{user.username}}</td><td>{{strings.roleNames(user.role)}}</td>
+						<td>{#
+							#}<a href="{{urlFor('admin-user-edit', {'id': user.id})}}" class="js-openform button small" data-title="Upravit uživatelský účet">upravit</a>{#
 							#}{% if user.id > 0 %}&nbsp;&nbsp;{#
-							#}<a href="{{ajs}}" class="button small">smazat</a>{#
-							#}{% endif %}</td>
+								#}<a href="{{urlFor('admin-user-delete', {'id': user.id})}}" class="js-openform button small" data-title="Smazat uživatelský účet">smazat</a>{#
+							#}{% endif %}
+						</td>
 					</tr>
 				{% endfor %}
 			</table>
 		</div>
 		<div id="log" class="tab">
-			Log
+			<textarea readonly="">{{log}}</textarea>
 		</div>
 	</div>
 </body>
