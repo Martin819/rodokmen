@@ -1,5 +1,5 @@
 {% if todelete %}
-<form action="{{action}}" method="post" class="vex-dialog-form">
+<form action="{{action}}" method="post" class="vex-dialog-form" data-jscb='[["submit", "formSubmit"], ["jscb:ajax", "vexAjax"]]'>
 	<input type="hidden" name="rdk_id" value="{{id}}" />
 	<div>
 		Budou smazány záznamy o těchto lidech:
@@ -11,14 +11,14 @@
 		Toto nelze vzít zpět. Pokračovat?
 	</div>
 	<div class="vex-dialog-buttons">
-		<input type="submit" value="Pokračovat" class="focus js-formsubmit vex-dialog-button-danger vex-dialog-button" />
-		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+		<input type="submit" value="Pokračovat" class="focus vex-dialog-button-danger vex-dialog-button" />
+		<input type="button" value="Zrušit" class="vex-cancel vex-dialog-button-secondary vex-dialog-button" />
 	</div>
 </form>
 {% else %}
-	<p>Nelze smazat!</p>
-	<small>Tento člověk nebo svazek nemůže být smazán, protože má příliš mnoho propojení se zbytkem stromu.</small> {# FIXME #}
+	<p>Nelze smazat</p>
+	<small>Tento člověk nebo svazek nemůže být smazán, protože má příliš mnoho propojení se zbytkem stromu.</small>
 	<div class="vex-dialog-buttons">
-		<input type="button" value="Ok" class="focus js-formcancel vex-dialog-button-primary vex-dialog-button" />
+		<input type="button" value="Ok" class="focus vex-cancel vex-dialog-button-primary vex-dialog-button" />
 	</div>
 {% endif %}

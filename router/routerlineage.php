@@ -45,6 +45,7 @@ class RouterLineage extends RouterBase
 				if (!$bean->edit($rq)) $app->halt(403);
 				$person->store($bean);
 				$app->logOp(Op::Update, $bean);
+				$app->formResponse('cyEdited', 'p'.$bean->id);
 			})->name('person-edit-p');
 
 			// Delete a person:
@@ -67,6 +68,7 @@ class RouterLineage extends RouterBase
 				{
 					$app->logOpAll(Op::Delete, $delbeans);
 					R::trashAll($delbeans);
+					$app->formResponse('cyEdited');
 				});
 			})->name('person-delete-p');
 
@@ -108,6 +110,8 @@ class RouterLineage extends RouterBase
 
 					$app->logOp(Op::Create, $p);
 					$app->logOp(Op::Create, $r);
+
+					$app->formResponse('cyEdited', 'p'.$p->id);
 				});
 			})->name('marriage-newchild-p');
 
@@ -143,6 +147,8 @@ class RouterLineage extends RouterBase
 					$app->logOp(Op::Create, $m);
 					$app->logOp(Op::Create, $r1);
 					$app->logOp(Op::Create, $r2);
+
+					$app->formResponse('cyEdited', 'm'.$m->id);
 				});
 			})->name('marriage-new-withperson-p');
 
@@ -187,6 +193,8 @@ class RouterLineage extends RouterBase
 					$app->logOp(Op::Create, $rp1);
 					$app->logOp(Op::Create, $rp2);
 					$app->logOp(Op::Create, $rc);
+
+					$app->formResponse('cyEdited', 'm'.$m->id);
 				});
 			})->name('marriage-new-forchild-p');
 
@@ -210,6 +218,7 @@ class RouterLineage extends RouterBase
 				{
 					$app->logOpAll(Op::Delete, $delbeans);
 					R::trashAll($delbeans);
+					$app->formResponse('cyEdited');
 				});
 			})->name('marriage-delete-p');
 		});

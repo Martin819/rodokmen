@@ -51,20 +51,20 @@
 			var fid = $t.data('idx');
 			fotorama.show(fid);
 			fotorama.requestFullScreen();
-		})
-		.mouseenter(function() { $(this).children('.photo-tools').show(); })
-		.mouseleave(function() { $(this).children('.photo-tools').hide(); });
+		});
+		// .mouseenter(function() { $(this).children('.photo-tools').show(); })  // done by CSS now
+		// .mouseleave(function() { $(this).children('.photo-tools').hide(); });
 
 		$('#gallery .photo-tools').click(function(e)
 		{
 			e.preventDefault();
 			e.stopPropagation();
-		})
+		});
 
 		$('#gallery .photo-download').click(function()
 		{
 			location.href = $(this).data('href');
-		})
+		});
 	}
 
 	$(document).ready(function()

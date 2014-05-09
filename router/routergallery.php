@@ -39,6 +39,7 @@ class RouterGallery extends RouterBase
 				if (!$bean->addUpload($app->request)) $app->halt(403);
 				$media->store($bean);
 				$app->logOp(Op::Create, $bean);
+				$app->formResponse('reload');
 			})->name('gallery-upload-p');
 
 			// Edit media:
@@ -59,6 +60,7 @@ class RouterGallery extends RouterBase
 				if (!$bean->edit($app->request)) $app->halt(403);
 				$media->store($bean);
 				$app->logOp(Op::Update, $bean);
+				$app->formResponse('reload');
 			})->name('gallery-edit-p');
 
 			// Delete media:
@@ -75,6 +77,7 @@ class RouterGallery extends RouterBase
 				$bean = RouterBase::getBean($app->request->post('rdk_id'), $media, $app);
 				$app->logOp(Op::Delete, $bean);
 				$media->trash($bean);
+				$app->formResponse('reload');
 			})->name('gallery-delete-p');
 		});
 	}

@@ -1,8 +1,8 @@
-<form action="{{action}}" method="post" class="vex-dialog-form">
+<form action="{{action}}" method="post" class="vex-dialog-form" data-jscb='[["submit", "formSubmit"], ["jscb:ajax", "vexAjax"]]'>
 	<input type="hidden" name="rdk_id" value="{{id}}" />
 	<div class="vex-input-field">
 		<label for="rdk_p1_firstname">Jméno</label>
-		<input type="text" name="rdk_p1_firstname" class="vex-dialog-edit focus" value="{{name.first}}" />
+		<input type="text" name="rdk_p1_firstname" class="focus vex-dialog-edit" value="{{name.first}}" />
 	</div>
 	<div class="vex-input-field">
 		<label for="rdk_p1_lastname">Příjmení</label>
@@ -18,7 +18,7 @@
 		<input type="text" name="rdk_p2_lastname" class="vex-dialog-edit" value="{{name.last}}" />
 	</div>
 	<div class="vex-dialog-buttons">
-		<input type="submit" value="Uložit" class="js-formsubmit vex-dialog-button-primary vex-dialog-button" />
-		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+		<input type="submit" value="Uložit" class="vex-dialog-button-primary vex-dialog-button" />
+		<input type="button" value="Zrušit" class="vex-cancel vex-dialog-button-secondary vex-dialog-button" />
 	</div>
 </form>

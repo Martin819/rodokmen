@@ -1,4 +1,4 @@
-<form action="{{action}}" method="post" class="vex-dialog-form">
+<form action="{{action}}" method="post" class="vex-dialog-form" data-jscb='[["submit", "formSubmit"], ["jscb:ajax", "vexAjax"]]'>
 	<input type="hidden" name="rdk_id" value="{{bean.id}}" />
 	<div>
 		<p>Bude smazána fotografie:</p>
@@ -6,7 +6,7 @@
 		<p>Toto nelze vzít zpět. Pokračovat?</p>
 	</div>
 	<div class="vex-dialog-buttons">
-		<input type="submit" value="Pokračovat" class="focus js-formsubmit vex-dialog-button-danger vex-dialog-button" />
-		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+		<input type="submit" value="Pokračovat" class="focus vex-dialog-button-danger vex-dialog-button" />
+		<input type="button" value="Zrušit" class="vex-cancel vex-dialog-button-secondary vex-dialog-button" />
 	</div>
 </form>

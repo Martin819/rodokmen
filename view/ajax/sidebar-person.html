@@ -5,8 +5,8 @@
 	<div class="hr"></div>
 		{% if contrib %}
 			<div class="center">
-				<a href="{{urlFor('person-edit', {'id': p.id})}}" class="js-openform button" data-title="Upravit údaje">upravit údaje</a>
-				<a href="{{urlFor('person-delete', {'id': p.id})}}" class="js-openform button" data-title="Smazat záznam">smazat</a>
+				<a href="{{ajs}}" class="button" data-jscb='["click", "vexOpen", "{{urlFor('person-edit', {'id': p.id})}}", "Upravit údaje"]'>upravit údaje</a>
+				<a href="{{ajs}}" class="button" data-jscb='["click", "vexOpen", "{{urlFor('person-delete', {'id': p.id})}}", "Smazat záznam"]'>smazat</a>
 			</div>
 		{% endif %}
 		<ul>
@@ -14,15 +14,15 @@
 				<h3>Rodiče:</h3>
 				{% if parents %}
 					<div id="parents">
-						<a href="{{ajs}}" data-cyid="{{parents.0.cyid}}" class="js-sbselect">{{parents.0.dname}}</a>
-						&nbsp;<a href="{{ajs}}" data-cyid="{{parentMarriage}}" class="js-sbselect">&#9472;&#9679;&#9472;</a>&nbsp;
-						<a href="{{ajs}}" data-cyid="{{parents.1.cyid}}" class="js-sbselect">{{parents.1.dname}}</a>
+						<a href="{{ajs}}" data-jscb='["click", "cySelect", "{{parents.0.cyid}}"]'>{{parents.0.dname}}</a>
+						&nbsp;<a href="{{ajs}}" data-jscb='["click", "cySelect", "{{parentMarriage}}"]'>&#9472;&#9679;&#9472;</a>&nbsp;
+						<a href="{{ajs}}" data-jscb='["click", "cySelect", "{{parents.1.cyid}}"]'>{{parents.1.dname}}</a>
 					</div>
 				{% else %}
 					<span>?</span>
 					{% if contrib %}
 						<span class="right">
-							<a href="{{urlFor('marriage-new-forchild', {'id': p.id})}}" class="js-openform button" data-title="Přidat rodiče">přidat</a>
+							<a href="{{ajs}}" data-jscb='["click", "vexOpen", "{{urlFor('marriage-new-forchild', {'id': p.id})}}", "Přidat rodiče"]' class="button">přidat</a>
 						</span>
 					{% endif %}
 				{% endif %}
@@ -31,19 +31,19 @@
 				<h3>Svazky:</h3>
 				{% if contrib %}
 					<span class="right">
-						<a href="{{urlFor('marriage-new-withperson', {'id': p.id})}}" class="js-openform button" data-title="Přidat svazek">přidat</a>
+						<a href="{{ajs}}" data-jscb='["click", "vexOpen", "{{urlFor('marriage-new-withperson', {'id': p.id})}}", "Přidat svazek"]' class="button">přidat</a>
 					</span>
 				{% endif %}
 				{% for m in marriages %}
 					<div>
-							<a href="{{ajs}}" data-cyid="{{m.cyid}}" class="js-sbselect">&#9472;&#9679;&#9472;</a>&nbsp;
-							<a href="{{ajs}}" data-cyid="{{m.spouse.cyid}}" class="js-sbselect">{{m.spouse.dname}}</a>
+							<a href="{{ajs}}" data-jscb='["click", "cySelect", "{{m.cyid}}"]'>&#9472;&#9679;&#9472;</a>&nbsp;
+							<a href="{{ajs}}" data-jscb='["click", "cySelect", "{{m.spouse.cyid}}"]'>{{m.spouse.dname}}</a>
 					</div>
 					{% if m.children %}
 					<div class="children">
 						&nbsp;&nbsp;&nbsp;&#8627;&nbsp;
 						{% for c in m.children %}
-							<span class="comma"><a href="{{ajs}}" data-cyid="{{c.cyid}}" class="js-sbselect">{{c.dname}}</a></span>
+							<span class="comma"><a href="{{ajs}}" data-jscb='["click", "cySelect", "{{c.cyid}}"]'>{{c.dname}}</a></span>
 						{% endfor %}
 					</div>
 					{% endif %}

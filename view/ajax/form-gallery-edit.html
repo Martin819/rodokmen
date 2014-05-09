@@ -1,22 +1,22 @@
-<form action="{{action}}" method="post" {% if upload %}enctype="multipart/form-data"{% endif %} class="vex-dialog-form">
+<form action="{{action}}" method="post" {% if upload %}enctype="multipart/form-data"{% endif %} class="vex-dialog-form" data-jscb='[["submit", "formSubmit"], ["jscb:ajax", "vexAjax"]]'>
 	{% if bean %}<input type="hidden" name="rdk_id" value="{{bean.id}}" />{% endif %}
 		{% if upload %}
 			{# TODO: MAX_FILE_SIZE as per http://www.php.net/manual/en/features.file-upload.post-method.php #}
 			<div class="vex-input-field">
 				<label for="rdk_uploadfile">Soubor</label>
-				<input type="file" name="rdk_uploadfile" class="vex-dialog-edit" />
+				<input type="file" name="rdk_uploadfile" class="focus vex-dialog-edit" />
 			</div>
 		{% endif %}
 		<div class="vex-input-field">
 			<label for="rdk_year">Rok vytvoření</label>
-			<input type="text" name="rdk_year" class="vex-dialog-edit" value="{{bean.year}}" />
+			<input type="text" name="rdk_year" class="{% if not upload %}focus {% endif %}vex-dialog-edit" value="{{bean.year}}" />
 		</div>
 		<div class="vex-input-field">
 			<label for="rdk_comment">Komentář</label>
 			<textarea name="rdk_comment" class="vex-dialog-edit" rows="3">{{bean.comment}}</textarea>
 		</div>
 	<div class="vex-dialog-buttons">
-		<input type="submit" value="Uložit" class="js-formsubmit vex-dialog-button-primary vex-dialog-button" />
-		<input type="button" value="Zrušit" class="js-formcancel vex-dialog-button-secondary vex-dialog-button" />
+		<input type="submit" value="Uložit" class="vex-dialog-button-primary vex-dialog-button" />
+		<input type="button" value="Zrušit" class="vex-cancel vex-dialog-button-secondary vex-dialog-button" />
 	</div>
 </form>

@@ -190,11 +190,13 @@
 		{
 			if (e.added) input.val(JSON.stringify(e.added));
 			else if (e.removed) input.val('{"removed": true}');
-		})
+		});
+
+		return this;
 	}
 
-
 	// Ready setup
+	// TODO: move to rodokmen.js (?)
 
 	$(document).ready(function()
 	{

@@ -1,27 +1,19 @@
 {% include 'header.html' %}
 	<link rel="stylesheet" type="text/css" media="screen" href="rs/main.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="rs/gallery.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex-theme-plain-mod.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="rs/fotorama.css" />
-	<script language="javascript" type="text/javascript" src="rs/lib/jquery.form.js"></script>
-	<script language="javascript" type="text/javascript" src="rs/lib/raphael.min.js"></script>
-	<script language="javascript" type="text/javascript" src="rs/lib/vex.combined.min.js"></script>
 	<script language="javascript" type="text/javascript" src="rs/lib/fotorama.js"></script>
-	<script language="javascript" type="text/javascript" src="rs/utils.js"></script>
-	<script language="javascript" type="text/javascript" src="rs/gallery.js"></script>
-	<script language="javascript" type="text/javascript">
-		vex.defaultOptions.className = 'vex-theme-plain';
-	</script>
 </head>
-<body>
+<body class="jscb" data-jscb='["jscb:ajax", "globalAjax"]'>
 	<div id="spinner"></div>
 	<div id="fotorama" class="fotorama" data-allowfullscreen="true" data-nav="thumbs" data-width="1%" data-ratio="800/600">
- 		{% for m in media %}
- 			<div data-thumb="{{m.thumb_url}}" data-img="{{m.view_url}}">
- 				<div class="html">{{m.comment}}</div>
- 			</div>
-		{% endfor %}
+		{% spaceless %}
+	 		{% for m in media %}
+				<div data-thumb="{{m.thumb_url}}" data-img="{{m.view_url}}">
+					<div class="html">{{m.comment}}</div>
+				</div>
+			{% endfor %}
+		{% endspaceless %}
 	</div>
 
 	{% include 'menubar.html' %}
@@ -29,26 +21,28 @@
 		{% if contrib %}
 			<div id="buttons">
 				<div class="right">
-					<a href="{{urlFor('gallery-upload')}}" class="js-openform button" data-title="Přidat fotografii">Přidat fotografii</a>
+					<a href="{{ajs}}" class="button jscb" data-jscb='["click", "vexOpen", "{{urlFor('gallery-upload')}}", "Přidat fotografii"]'>Přidat fotografii</a>
 				</div>
 			</div>
 		{% endif %}
-		{% set year = -1 %}
-		{% for m in media %}
-			{% if m.year != year %}
-				<h2>{{m.year}}</h2>
-				{% set year = m.year %}
-			{% endif %}
-			<a href="{{m.view_url}}" class="photo" data-idx="{{loop.index0}}" style="background-image: url('{{m.thumb_url}}');">
-				<div class="photo-tools">
-					<span class="photo-download" data-href="{{urlFor('gallery-download', {'id': m.id})}}">stáhnout</span>
-					{% if contrib %}
-						<span class="js-openform" data-title="Upravit fotografii" data-href="{{urlFor('gallery-edit', {'id': m.id})}}">upravit</span>
-						<span class="js-openform" data-title="Smazat fotografii" data-href="{{urlFor('gallery-delete', {'id': m.id})}}">smazat</span>
-					{% endif %}
-				</div>
-			</a>
-		{% endfor %}
+		{% spaceless %}
+			{% set year = -1 %}
+			{% for m in media %}
+				{% if m.year != year %}
+					<h2>{{m.year}}</h2>
+					{% set year = m.year %}
+				{% endif %}
+				<a href="{{m.view_url}}" class="photo jscb" data-jscb='["click", "fotorama", "{{loop.index0}}"]' style="background-image: url('{{m.thumb_url}}');">
+					<div class="photo-tools">
+						<span class="jscb" data-jscb='["click", "location", "{{urlFor('gallery-download', {'id': m.id})}}"]'>stáhnout</span>
+						{% if contrib %}
+							<span class="jscb" data-jscb='["click", "vexOpen", "{{urlFor('gallery-edit', {'id': m.id})}}", "Upravit fotografii"]'>upravit</span>
+							<span class="jscb" data-jscb='["click", "vexOpen", "{{urlFor('gallery-delete', {'id': m.id})}}", "Smazat fotografii"]'>smazat</span>
+						{% endif %}
+					</div>
+				</a>
+			{% endfor %}
+		{% endspaceless %}
 	</div>
 </body>
 </html>
