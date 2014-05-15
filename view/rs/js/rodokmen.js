@@ -139,7 +139,7 @@
 		return false;
 	}
 
-	rdk.sidebarAjax = function(e, status)
+	rdk.sidebarJscbAjax = function(e, status)
 	{
 		if (status == 'start')
 		{
@@ -269,7 +269,7 @@
 		this.jscb('get', rdk.ajaxUrl('/lineage'), giddyUp);
 	}
 
-	rdk.cyAjax = function(e, status)
+	rdk.cyJscbAjax = function(e, status)
 	{
 		if (status == 'always') e.stopPropagation(); // Let's not stop the spinner just yet
 	}
@@ -329,6 +329,12 @@
 		}
 	}
 
+	rdk.vexValidationError = function()
+	{
+		this.children().show();
+		this.find('input[type=radio]').removeClass('jscb-input-invalid').closest('.vex-dialog-edit').addClass('jscb-input-invalid');
+	}
+
 	rdk.vexClose = function(e)
 	{
 		var $vex = this.closest('.vex');
@@ -352,7 +358,7 @@
 		fotorama.requestFullScreen();
 	}
 
-	rdk.leaflet = function(e)
+	rdk.mapInit = function(e)
 	{
 		function makemap(e, data)
 		{
@@ -360,6 +366,12 @@
 		}
 
 		this.jscb('get', rdk.ajaxUrl('/places'), makemap);
+	}
+
+	rdk.adminTab = function(e, target)
+	{
+		$('.tab').hide();
+		$(target).show();
 	}
 
 
@@ -370,8 +382,12 @@
 			namespace: function() { return window.rdk; },
 			binds:
 			[
+				['body', 'jscb:ajax', 'globalAjax'],
 				['.focus', '', 'focus'],
 				['.nominatim', '', 'nominatim'],
+				['.vex-dialog-form', 'submit'],
+				['.vex-dialog-form', 'jscb:ajax', 'vexAjax'],
+				['.vex-dialog-form', 'jscb:validationError', 'vexValidationError'],
 				['.vex-cancel', 'click', 'vexClose']
 			]
 		});

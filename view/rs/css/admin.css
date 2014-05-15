@@ -16,6 +16,11 @@
 	display: none;
 }
 
+#admin .tab.tab-default
+{
+	display: block;
+}
+
 #admin .tab-control.tab-active a
 {
 	text-decoration: underline;;

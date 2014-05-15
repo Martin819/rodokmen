@@ -1,11 +1,11 @@
 <form action="{{action}}" method="post" class="vex-dialog-form">
 		<div class="vex-input-field">
 			<label for="rdk_pw_current">Současné heslo</label>
-			<input type="password" name="rdk_pw_current" class="vex-dialog-edit" value=""/>
+			<input type="password" name="rdk_pw_current" class="focus vex-dialog-edit" value=""/>
 		</div>
 		<div class="vex-input-field">
 			<label for="rdk_pw_new">Nové heslo</label>
-			<input type="password" name="rdk_pw_new" class="vex-dialog-edit" value=""/>
+			<input type="password" name="rdk_pw_new" class="vex-dialog-edit" value="" placeholder="Minimální délka: {{constant('Rodokmen\\User::pwMinChars')}} znaků"/>
 		</div>
 		<div class="vex-input-field">
 			<label for="rdk_pw_new_verif">Nové heslo ‒ potvrzení</label>

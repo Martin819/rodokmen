@@ -39,13 +39,15 @@ class RouterLineage extends RouterBase
 			})->name('person-edit');
 			$app->post('/person/edit', $self->authRole(Role::Contrib), function() use ($app)
 			{
-				$rq = $app->request;
-				$person = new Person();
-				$bean = RouterBase::getBean($rq->post('rdk_id'), $person, $app);
-				if (!$bean->edit($rq)) $app->halt(403);
-				$person->store($bean);
-				$app->logOp(Op::Update, $bean);
-				$app->formResponse('cyEdited', 'p'.$bean->id);
+				DB::transaction(DB::data, function() use ($app)
+				{
+					$person = new Person();
+					$bean = RouterBase::getBean($app->request->post('rdk_id'), $person, $app);
+					$bean->edit($_POST);
+					$person->store($bean);
+					$app->logOp(Op::Update, $bean);
+					return array('cyEdited', 'p'.$bean->id);
+				});
 			})->name('person-edit-p');
 
 			// Delete a person:
@@ -68,7 +70,7 @@ class RouterLineage extends RouterBase
 				{
 					$app->logOpAll(Op::Delete, $delbeans);
 					R::trashAll($delbeans);
-					$app->formResponse('cyEdited');
+					return array('cyEdited');
 				});
 			})->name('person-delete-p');
 
@@ -102,7 +104,7 @@ class RouterLineage extends RouterBase
 					$pod_r = new Relation();
 
 					$p = $pod_p->setupNew();
-					if (!$p->edit($rq)) $app->halt(403);
+					$p->edit($_POST);
 					$r = $pod_r->relate($p, $m, 'child');
 
 					$pod_p->store($p);
@@ -111,7 +113,7 @@ class RouterLineage extends RouterBase
 					$app->logOp(Op::Create, $p);
 					$app->logOp(Op::Create, $r);
 
-					$app->formResponse('cyEdited', 'p'.$p->id);
+					return array('cyEdited', 'p'.$p->id);
 				});
 			})->name('marriage-newchild-p');
 
@@ -133,7 +135,7 @@ class RouterLineage extends RouterBase
 
 					$p = RouterBase::getBean($rq->post('rdk_id'), $pod_p, $app);
 					$np = $pod_p->setupNew();
-					if (!$np->edit($rq)) $app->halt(403);
+					$np->edit($_POST);
 					$m = $pod_m->setupNew();
 					$r1 = $pod_r->relate($p,  $m, 'parent');
 					$r2 = $pod_r->relate($np, $m, 'parent');
@@ -148,7 +150,7 @@ class RouterLineage extends RouterBase
 					$app->logOp(Op::Create, $r1);
 					$app->logOp(Op::Create, $r2);
 
-					$app->formResponse('cyEdited', 'm'.$m->id);
+					return array('cyEdited', 'm'.$m->id);
 				});
 			})->name('marriage-new-withperson-p');
 
@@ -172,9 +174,10 @@ class RouterLineage extends RouterBase
 					if ($c->parents()) $app->halt(403);  // Checks whether this person already has parents
 
 					$p1 = $pod_p->setupNew();
-					if (!$p1->setNames($rq->post('rdk_p1_firstname'), $rq->post('rdk_p1_lastname'))) $app->halt(403);
 					$p2 = $pod_p->setupNew();
-					if (!$p2->setNames($rq->post('rdk_p2_firstname'), $rq->post('rdk_p2_lastname'))) $app->halt(403);
+
+					ModelPerson::editNewParents($_POST, $p1, $p2);
+
 					$m = $pod_m->setupNew();
 					$rp1 = $pod_r->relate($p1, $m, 'parent');
 					$rp2 = $pod_r->relate($p2, $m, 'parent');
@@ -194,7 +197,7 @@ class RouterLineage extends RouterBase
 					$app->logOp(Op::Create, $rp2);
 					$app->logOp(Op::Create, $rc);
 
-					$app->formResponse('cyEdited', 'm'.$m->id);
+					return array('cyEdited', 'm'.$m->id);
 				});
 			})->name('marriage-new-forchild-p');
 
@@ -218,7 +221,7 @@ class RouterLineage extends RouterBase
 				{
 					$app->logOpAll(Op::Delete, $delbeans);
 					R::trashAll($delbeans);
-					$app->formResponse('cyEdited');
+					return array('cyEdited');
 				});
 			})->name('marriage-delete-p');
 		});

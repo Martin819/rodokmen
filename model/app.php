@@ -160,14 +160,4 @@ class App extends Slim\Slim
 		$writer = $this->log->getWriter();
 		return $writer->tail($tailBytes);
 	}
-
-	public function formResponse($callback, $data = '')
-	{
-		$this->response->headers->set('Content-Type', 'application/json');
-		echo \json_encode(array(
-				'callback' => $callback,
-				'data' => $data
-			),
-			JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS);
-	}
 };

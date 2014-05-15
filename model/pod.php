@@ -1,6 +1,8 @@
 <?php
 namespace Rodokmen;
 use \R;
+use \JSCB\ValidationError;
+use \Valitron\Validator;
 
 
 class Pod
@@ -52,4 +54,49 @@ class Pod
 		$bean = R::dispense($this->name);
 		return $bean;
 	}
+
+
+	static public function validate($input, $rules)
+	{
+		$v = new Validator($input);
+
+		foreach ($rules as $rule)
+		{
+			\call_user_func_array(array($v, 'rule'), $rule);
+		}
+
+		if (!$v->validate()) throw new ValidationError($v->errors());
+
+		return $v->data();
+	}
 }
+
+
+// Additional rules for Valitron:
+
+Validator::addRule('file', function($field, $value, array $params)
+{
+	if (!\is_array($value) || !\array_key_exists('tmp_name', $value)) return false;
+	$tmp_fn = $value['tmp_name'];
+
+	// if (!\is_uploaded_file($tmp_fn)) return false;  // Doesn't work reliably :-/
+
+	if (\array_key_exists(0, $params))
+	{
+		// Size check
+		if (\filesize($tmp_fn) > $params[0]) return false;
+	}
+
+	if (\array_key_exists(1, $params))
+	{
+		// MIME type check
+		if (!\in_array(\strtolower($value['type']), $params[1])) return false;
+	}
+
+  return true;
+}, 'Invalid upload.');
+
+Validator::addRule('eval', function($field, $value, array $params)
+{
+	return \array_key_exists(0, $params) && ($params[0] === true);
+}, '');

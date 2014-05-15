@@ -11,10 +11,9 @@ abstract class Role
 	const Contrib = 2;
 	const Admin   = 3;
 
-	static public function validate($role)
-	{
-		return $role >= self::Member && $role <= self::Admin;  // Anon is not a valid role for a user
-	}
+	// Valid roles for editation:
+	const ValidMin = 1;
+	const ValidMax = 3;
 }
 
 abstract class UserBase
@@ -27,21 +26,30 @@ abstract class UserBase
 		$this->session->setID($id);
 	}
 
-	protected function validate_edit_rq($rq, $isNew, $noRole = false)
+	protected function validate_edit_rq($input, $isNew, $noRole = false)
 	{
-		$username = $rq->post('rdk_username');
-		$pw = $rq->post('rdk_pw');
+		$required = array('rdk_username');
+		if ($isNew) \array_push($required, 'rdk_pw', 'rdk_pw_verif', 'rdk_role');
 
-		if (\strlen($username) < 1) return false;
-		if ($isNew && (User::fromUsername($username) !== false)) return false;
-		if ($isNew && \strlen($pw) < 1) return false;
-		if (\strlen($pw) > 0)
+		$rules = array(
+				array('required', $required),
+				array('equals', 'rdk_pw', 'rdk_pw_verif'),
+				array('equals', 'rdk_pw_verif', 'rdk_pw')
+			);
+
+		if ($isNew)
 		{
-			if ($pw !== $rq->post('rdk_pw_verif')) return false;
+			$rules[] = array('eval', 'rdk_username', User::fromUsername($input['rdk_username']) === false);
 		}
-		if (!$noRole && !Role::validate(\intval($rq->post('rdk_role')))) return false;
 
-		return true;
+		if (!$noRole)
+		{
+			$rules[] = array('integer', 'rdk_role');
+			$rules[] = array('min', 'rdk_role', Role::ValidMin);
+			$rules[] = array('max', 'rdk_role', Role::ValidMax);
+		}
+
+		return Pod::validate($input, $rules);
 	}
 
 	abstract public function edit($rq, $isNew = false);
@@ -71,17 +79,15 @@ class StaticAdmin extends UserBase
 		$this->session = $session;
 	}
 
-	public function edit($rq, $isNew = false)
+	public function edit($input, $isNew = false)
 	{
-		if (!$this->validate_edit_rq($rq, $isNew, true)) return false;
+		$d = $this->validate_edit_rq($input, false, true);  // StaticAdmin cannot be a new user
 
 		$conf = App::getApp()->conf();
-		$pw = $rq->post('rdk_pw');
+		$pw = $d['rdk_pw'];
 
-		$conf->admin_username = $rq->post('rdk_username');
+		$conf->admin_username = $d['rdk_username'];
 		if (\strlen($pw) > 0) $conf->admin_hash = PBKDF2::create($pw);
-
-		return true;
 	}
 
 	public function login($pw)
@@ -102,7 +108,7 @@ class StaticAdmin extends UserBase
 
 class AnonUser extends UserBase
 {
-	public function edit($rq, $isNew = false) { return false; }
+	public function edit($rq, $isNew = false) { throw new Exception("AnonUser cannot be edited"); }
 	public function login($pw) {}
 	public function role() { return Role::Anon; }
 	public function roleMatches($role) { return Role::Anon >= $role; }
@@ -190,29 +196,31 @@ class User extends UserBase
 		return PBKDF2::validate($pw, $this->bean->hash);
 	}
 
-	public function editPassword($rq)
+	public function editPassword($input)
 	{
-		$pw = $rq->post('rdk_pw_new');
+		$d = Pod::validate($input, array(
+				array('required', array('rdk_pw_current', 'rdk_pw_new', 'rdk_pw_new_verif')),
+				array('eval', 'rdk_pw_current', $this->validatePassword($input['rdk_pw_current'])),
+				array('lengthMin', 'rdk_pw_new', self::pwMinChars),
+				array('equals', 'rdk_pw_new', 'rdk_pw_new_verif'),
+				array('equals', 'rdk_pw_new_verif', 'rdk_pw_new')
+			));
 
-		if (\strlen($pw) < self::pwMinChars) return false;
-		if ($pw !== $rq->post('rdk_pw_new_verif')) return false;
-
+		$pw = $d['rdk_pw_new'];
 		$this->bean->hash = PBKDF2::create($pw);
 		$this->store();
-		return true;
 	}
 
-	public function edit($rq, $isNew = false)
+	public function edit($input, $isNew = false)
 	{
-		if (!$this->validate_edit_rq($rq, $isNew)) return false;
+		$d = $this->validate_edit_rq($input, $isNew);
 
-		$pw = $rq->post('rdk_pw');
-		$this->bean->username = $rq->post('rdk_username');
+		$this->bean->username = $d['rdk_username'];
+		$pw = $d['rdk_pw'];
 		if (\strlen($pw) > 0) $this->bean->hash = PBKDF2::create($pw);
-		$this->bean->role = \intval($rq->post('rdk_role'));
+		$this->bean->role = \intval($d['rdk_role']);
 
 		$this->store();
-		return true;
 	}
 
 	public function login($pw)

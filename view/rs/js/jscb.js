@@ -7,10 +7,10 @@
 
 	function call_cb($this, cb, eo, args)
 	{
-		var cbns = $.fn.jscb.opts.namespace.call($this);
+		var cbns = $.fn.jscb.opts.namespace.call($this, cb, eo);
 		args.unshift(eo);
-		if (typeof builtins[cb] === 'function') return builtins[cb].apply($this, args);
-		else if (typeof cbns[cb] === 'function') return cbns[cb].apply($this, args);
+		if (typeof cbns[cb] === 'function') return cbns[cb].apply($this, args);
+		else if (typeof builtins[cb] === 'function') return builtins[cb].apply($this, args);
 	}
 
 	function xhr_events($target, xhr)
@@ -22,8 +22,30 @@
 		$target.trigger('jscb:ajax', ['start', xhr]);
 	}
 
-	function bind($this, ev, cb, args)
+	function cb_from_ev($this, ev)
 	{
+		var prefix = $this.attr('id');
+		if (prefix === void 0) prefix = $this.prop('tagName').toLowerCase();
+
+		if (ev === '') return prefix + 'Init';
+		else
+		{
+			return prefix + ev.split(/\W/).map(function(s)
+			{
+				return s.charAt(0).toUpperCase() + s.slice(1);
+			}).join('');
+		}
+	}
+
+	function bind($this, args)
+	{
+		if (args.length < 1) return;
+		var ev = args.shift();
+		var cb = args.shift();
+
+		// If no cb is supplied infer it from $this and event name:
+		if (cb === void 0 || cb === '') cb = cb_from_ev($this, ev);
+
 		if (ev === '') call_cb($this, cb, undefined, args);
 		else $this.on(ev, function(eo)
 		{
@@ -34,14 +56,13 @@
 		});
 	}
 
-	function ajax_response($this, response)
+	function ajax_response_cb($this, response)
 	{
 		if (typeof response == 'object' &&
-		    'data' in response &&
+		    'data' in response && $.isArray(response.data) &&
 		    'callback' in response && typeof response.callback === 'string')
 		{
-			var cb = response.callback;
-			if (typeof cb === 'string') $this.jscb(cb, response.data);  // TODO: array of {data, cb}
+			call_cb($this, response.callback, undefined, response.data);
 		}
 	}
 
@@ -54,15 +75,28 @@
 		}
 	}
 
+	function apply_opts(opts)
+	{
+		$.extend($.fn.jscb.opts, opts);
+		if (typeof $.fn.jscb.opts.namespace !== 'function') throw 'JSCB: callback namespace not (correctly) defined';
+	}
+
+
+	builtins.multiple = function(e, cbs)
+	{
+		if (!$.isArray(cbs)) return;
+		for (var i = 0; i < cbs.length; i++) ajax_response_cb(this, cbs[i]);
+	}
 
 	builtins.alert = function(e, msg)
 	{
 		alert(msg);
 	}
 
-	builtins.focus = function(e)
+	builtins.focus = function(e, ele)
 	{
-		this.focus();
+		if (ele !== void 0) ele.focus();
+		else this.focus();
 	}
 
 	builtins.location = function(e, location)
@@ -80,7 +114,7 @@
 	builtins.html = function(e, data, append)
 	{
 		append ? this.append(data) : this.html(data);
-		if (!$.fn.jscb.opts.noAuto) this.find('*').jscb();
+		if (!$.fn.jscb.opts.noAuto) this.jscbAll();
 	}
 
 	builtins.ajaxClass = function(e, status)
@@ -105,6 +139,7 @@
 			{
 				if ($.isFunction(cb)) cb.apply(self, [e, data].concat(cbargs));
 				else if (typeof cb === 'string') self.jscb.apply(self, [cb, data].concat(cbargs));
+				else ajax_response_cb(self, data);
 			});
 
 			xhr_events(self, xhr);
@@ -129,7 +164,7 @@
 		xhr_events(this, xhr);
 		xhr.done(function(response)
 		{
-			ajax_response(self, response);
+			ajax_response_cb(self, response);
 		});
 		this.data('jscb:xhr', xhr);
 	}
@@ -140,11 +175,36 @@
 		if (xhr && xhr.readyState < 4) xhr.abort();
 	}
 
+	builtins.validationError = function(e, inputs)
+	{
+		this.trigger('jscb:validationError', inputs);
+		this.find('[name]').removeClass('jscb-input-invalid');
+		this.find('[name="'+inputs[0]+'"]').addClass('jscb-input-invalid').focus();
+		for (var i = 1; i < inputs.length; i++)
+		{
+			this.find('[name="'+inputs[i]+'"]').addClass('jscb-input-invalid');
+		};
+	}
+
+
+	$.fn.jscbAll = function(arg)
+	{
+		if (typeof arg === 'object')
+		{
+			apply_opts.call(this, arg);
+			arg = undefined;  // So that options are not re-applied in each jscb() call
+		}
+
+		$all = this.find('*');
+		$all.each(function()
+		{
+			$(this).jscb(arg);
+		});
+	}
 
 	$.fn.jscb = function(arg)
 	{
-		if (typeof arg === 'object') $.extend($.fn.jscb.opts, arg);
-		if (typeof $.fn.jscb.opts.namespace !== 'function') throw 'JSCB: callback namespace not (correctly) defined';
+		if (typeof arg === 'object') apply_opts.call(this, arg);
 
 		if (typeof arg === 'string')
 		{
@@ -155,29 +215,30 @@
 		}
 		else
 		{
-			for (var i = 0; i < $.fn.jscb.opts.binds.length; i++)
-			{
-				var b = $.fn.jscb.opts.binds[i];
-				var sel = b[0];
-				this.find(sel).each(function(i, e)
-				{
-					bind($(this), b[1], b[2], b.slice(2));
-				});
-			};
-
 			this.each(function(i, e)
 			{
 				var $this = $(this);
+
+				for (var i = 0; i < $.fn.jscb.opts.binds.length; i++)
+				{
+					var b = $.fn.jscb.opts.binds[i];
+					var sel = b[0];
+					if ($this.is(sel)) bind($this, b.slice(1));
+				};
+
 				var def = $this.data('jscb');
-				if (!$.isArray(def)) return true;
+				if (typeof def === 'string') def = [def];
+				else if (!$.isArray(def)) return true;
 				var evts = typeof def[0] === 'string' ? [def] : def;
 
 				for (var i = 0; i < evts.length; i++)
 				{
-					if (evts[i].length < 2) continue;
-					if (typeof evts[i][0] !== 'string' && typeof evts[i][1] !== 'string') continue;
+					var args;
+					if (typeof evts[i] === 'string') args = [evts[i]];
+					else if ($.isArray(evts[i])) args = evts[i];
+					else continue;
 
-					bind($this, evts[i][0], evts[i][1], evts[i].slice(2));
+					bind($this, args);
 				};
 
 				return true;

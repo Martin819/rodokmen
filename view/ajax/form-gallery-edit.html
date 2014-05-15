@@ -1,4 +1,4 @@
-<form action="{{action}}" method="post" {% if upload %}enctype="multipart/form-data"{% endif %} class="vex-dialog-form" data-jscb='[["submit", "formSubmit"], ["jscb:ajax", "vexAjax"]]'>
+<form action="{{action}}" method="post" {% if upload %}enctype="multipart/form-data"{% endif %} class="vex-dialog-form">
 	{% if bean %}<input type="hidden" name="rdk_id" value="{{bean.id}}" />{% endif %}
 		{% if upload %}
 			{# TODO: MAX_FILE_SIZE as per http://www.php.net/manual/en/features.file-upload.post-method.php #}

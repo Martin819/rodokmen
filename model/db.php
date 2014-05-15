@@ -35,7 +35,26 @@ abstract class Db
 	static public function transaction($dbname, $function)
 	{
 		self::select($dbname);
-		R::transaction($function);
+		R::begin();
+		try
+		{
+			$response = $function();
+			R::commit();
+			if (\is_array($response))
+			{
+				$cb = \array_shift($response);
+				\JSCB\Callback::sendCb($cb, $response);
+			}
+		}
+		catch(\Exception $e)
+		{
+			R::rollback();
+			if ($e instanceof \JSCB\ValidationError)
+			{
+				$e->callback()->send();
+			}
+			else throw $e;
+		}
 	}
 
 	static public function close() { R::close(); }

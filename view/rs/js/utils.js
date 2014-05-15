@@ -172,7 +172,7 @@
 					return {
 						results: $.map(data, function(p, i)
 						{
-							return { id: i, text: p.display_name, lon: p.lon, lat: p.lat };
+							return { id: i, text: p.display_name, name: p.display_name, lon: p.lon, lat: p.lat };
 						})
 					};
 				}
@@ -188,7 +188,13 @@
 		var input = $('#'+input_id);
 		this.on('change', function(e)
 		{
-			if (e.added) input.val(JSON.stringify(e.added));
+			if (e.added)
+			{
+				var place = e.added;
+				delete place.id;
+				delete place.text;
+				input.val(JSON.stringify(place));
+			}
 			else if (e.removed) input.val('{"removed": true}');
 		});
 

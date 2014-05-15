@@ -1,49 +1,41 @@
 {% import 'strings.html' as strings %}
 {% include 'header.html' %}
-	<link rel="stylesheet" type="text/css" media="screen" href="rs/main.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="rs/admin.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="rs/vex-theme-plain-mod.css" />
-	<script language="javascript" type="text/javascript" src="rs/lib/jquery.form.js"></script>
-	<script language="javascript" type="text/javascript" src="rs/lib/raphael.min.js"></script>
-	<script language="javascript" type="text/javascript" src="rs/lib/vex.combined.min.js"></script>
-	<script language="javascript" type="text/javascript" src="rs/utils.js"></script>
-	<script language="javascript" type="text/javascript" src="rs/admin.js"></script>
-	<script language="javascript" type="text/javascript">
-		vex.defaultOptions.className = 'vex-theme-plain';
-	</script>
 </head>
-<body>
+<body class="jscb">
 	<div id="spinner"></div>
 
 	{% include 'menubar.html' %}
 	<div id="admin" class="screen shadow-top">
 		<div id="admin-menu">
-			<span class="menuitem tab-control {# tab-default #}" data-tab="#settings"><a href="{{ajs}}">Nastavení</a></span>
-			<span class="menuitem tab-control tab-default" data-tab="#users"><a href="{{ajs}}">Uživatelé</a></span>
-			<span class="menuitem tab-control" data-tab="#log"><a href="{{ajs}}">Log</a></span>
+			<span class="menuitem"><a href="{{ajs}}" class="jscb" data-jscb='["click", "adminTab", "#settings"]'>Nastavení</a></span>
+			<span class="menuitem"><a href="{{ajs}}" class="jscb" data-jscb='["click", "adminTab", "#users"]'>Uživatelé</a></span>
+			<span class="menuitem"><a href="{{ajs}}" class="jscb" data-jscb='["click", "adminTab", "#log"]'>Log</a></span>
 		</div>
-		<div id="settings" class="tab">
+		<div id="settings" class="tab {# tab-default #}">
+			{# TODO #}
 		</div>
-		<div id="users" class="tab">
+		<div id="users" class="tab tab-default">
 			<div id="adduser">
 				<div class="right">
-					<a href="{{urlFor('admin-user-new')}}" class="js-openform button" data-title="Přidat uživatele">Přidat uživatele</a>
+					<a href="{{ajs}}" class="button jscb" data-jscb='["click", "vexOpen", "{{urlFor('admin-user-new')}}", "Přidat uživatele"]'>Přidat uživatele</a>
 				</div>
 			</div>
 			<table>
 				<tr><th>ID</th><th>Uživatelské jméno</th><th>Oprávnění</th><th>&nbsp;</th></tr>
-				{% for user in users %}
-					<tr>
-						<td>{{user.id}}</td><td>{{user.username}}</td><td>{{strings.roleNames(user.role)}}</td>
-						<td>{#
-							#}<a href="{{urlFor('admin-user-edit', {'id': user.id})}}" class="js-openform button small" data-title="Upravit uživatelský účet">upravit</a>{#
-							#}{% if user.id > 0 %}&nbsp;&nbsp;{#
-								#}<a href="{{urlFor('admin-user-delete', {'id': user.id})}}" class="js-openform button small" data-title="Smazat uživatelský účet">smazat</a>{#
-							#}{% endif %}
-						</td>
-					</tr>
-				{% endfor %}
+				{% spaceless %}
+					{% for user in users %}
+						<tr>
+							<td>{{user.id}}</td><td>{{user.username}}</td><td>{{strings.roleNames(user.role)}}</td>
+							<td>
+								<a href="{{ajs}}" class="button small jscb" data-jscb='["click", "vexOpen", "{{urlFor('admin-user-edit', {'id': user.id})}}", "Upravit uživatelský účet"]'>upravit</a>
+								{% if user.id > 0 %}<span>&nbsp;&nbsp;</span>
+									<a href="{{ajs}}" class="button small jscb" data-jscb='["click", "vexOpen", "{{urlFor('admin-user-delete', {'id': user.id})}}", "Smazat uživatelský účet"]'>smazat</a>
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+				{% endspaceless %}
 			</table>
 		</div>
 		<div id="log" class="tab">

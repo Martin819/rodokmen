@@ -10,22 +10,12 @@
 		{% if contrib %}
 			<span class="menuitem">
 				{% if admin %}<a href="{{urlFor('admin')}}">Administrace</a>
-				{% else %}<a href="{{urlFor('admin-user-changepw')}}" class="js-openform-menubar" data-title="Změna hesla">Nastavení</a>
+				{% else %}
+					<a href="{{ajs}}" class="jscb" data-jscb='["click", "vexOpen", "{{urlFor('admin-user-changepw')}}", "Změna hesla"]'>Nastavení</a>
 				{% endif %}
 			</span>
 		{% endif %}
 		<span class="menuitem"><a href="{{urlFor('logout')}}">Odhlásit</a></span>
 	</div>
 </div>
-<script language="javascript" type="text/javascript">
-	(function(rdk, $, undefined)
-	{
-		$('.js-openform-menubar').click(function(e)
-		{
-			e.preventDefault();
-			$t = $(this);
-			rdk.openForm($t.data('title'), $t.attr('href'));
-		});
-	}(window.rdk = window.rdk || {}, jQuery));
-</script>
 {% endspaceless %}

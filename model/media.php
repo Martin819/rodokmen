@@ -41,12 +41,21 @@ class ModelMedia extends \RedBean_SimpleModel
 		return __DIR__.'/../data/'.$url;
 	}
 
-	private function add_image()
+	private function unlink_if_exists($orig_fn, $thumb_fn, $view_fn)
+	{
+		if (\file_exists($orig_fn))  \unlink($orig_fn);
+		if (\file_exists($thumb_fn)) \unlink($thumb_fn);
+		if (\file_exists($view_fn))  \unlink($view_fn);
+	}
+
+	private function add_image($input_name)
 	{
 		//Create thumbnail and view image, store original
 
-		$tmp_fn = $_FILES['rdk_uploadfile']['tmp_name'];
-		$ext = \pathinfo($_FILES['rdk_uploadfile']['name'], PATHINFO_EXTENSION);
+		if (!\array_key_exists($input_name, $_FILES)) return false;
+
+		$tmp_fn = $_FILES[$input_name]['tmp_name'];
+		$ext = \pathinfo($_FILES[$input_name]['name'], PATHINFO_EXTENSION);
 		$unique_name = \uniqid('', true);
 		$orig_url  = self::url_image_orig.$unique_name.'.'.$ext;
 		$thumb_url = self::url_image_thumb.$unique_name.'.jpg';
@@ -55,7 +64,7 @@ class ModelMedia extends \RedBean_SimpleModel
 		$thumb_fn = self::media_fn($thumb_url);
 		$view_fn = self::media_fn($view_url);
 
-		\move_uploaded_file($tmp_fn, $orig_fn);
+		if (!\move_uploaded_file($tmp_fn, $orig_fn)) return false;
 
 		try
 		{
@@ -69,9 +78,7 @@ class ModelMedia extends \RedBean_SimpleModel
 		}
 		catch (Exception $e)
 		{
-			if (\file_exists($orig_fn))  \unlink($orig_fn);
-			if (\file_exists($thumb_fn)) \unlink($thumb_fn);
-			if (\file_exists($view_fn))  \unlink($view_fn);
+			self::unlink_if_exists($orig_fn, $thumb_fn, $view_fn);
 			return false;
 		}
 
@@ -86,44 +93,32 @@ class ModelMedia extends \RedBean_SimpleModel
 	public function after_delete()
 	{
 		// Invoked after bean is trashed
-		$orig_fn = self::media_fn($this->orig_url);
-		$thumb_fn = self::media_fn($this->thumb_url);
-		$view_fn = self::media_fn($this->view_url);
-		if (\file_exists($orig_fn))  \unlink($orig_fn);
-		if (\file_exists($thumb_fn)) \unlink($thumb_fn);
-		if (\file_exists($view_fn))  \unlink($view_fn);
+		self::unlink_if_exists(
+			self::media_fn($this->orig_url),
+			self::media_fn($this->thumb_url),
+			self::media_fn($this->view_url));
 	}
 
-	public function addUpload($rq)
+	public function edit($input, $upload = false)
 	{
-		// Initial checks:
-		if (!isset($_FILES['rdk_uploadfile'])) return false;
-		$tmp_fn = $_FILES['rdk_uploadfile']['tmp_name'];
-		if (!\is_uploaded_file($tmp_fn)) return false;
-		if (\filesize($tmp_fn) > Media::maxSize) return false;
-
-		// Edit:
-		if (!$this->edit($rq)) return false;
-
-		// Add file:
-		if (\in_array(\strtolower($_FILES['rdk_uploadfile']['type']), self::$image_formats))
+		// File upload validation:
+		if ($upload)
 		{
-			if (!$this->add_image()) return false;
+			Pod::validate($_FILES, array(
+					array('required', array('rdk_uploadfile')),
+					array('file', 'rdk_uploadfile', Media::maxSize, self::$image_formats),
+					array('eval', 'rdk_uploadfile', $this->add_image('rdk_uploadfile'))  // NOTE: it is important this rule comes after the file rule
+				));
 		}
-		else return false;
 
-		return true;
-	}
+		// Other inputs validation:
+		$d = Pod::validate($input, array(
+				array('required', array('rdk_year')),
+				array('integer', 'rdk_year')
+			));
 
-	public function edit($rq)
-	{
-		$year = $rq->post('rdk_year');
-		if (!\preg_match('/^-?[1-9][0-9]*$/D', $year)) return false;
-		$this->year = intval($year);
-
-		$this->comment = $rq->post('rdk_comment');
-
-		return true;
+		$this->year = $d['rdk_year'];
+		$this->comment = $d['rdk_comment'];
 	}
 
 	public function origFilename()

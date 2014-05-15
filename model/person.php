@@ -12,22 +12,42 @@ class ModelPerson extends \RedBean_SimpleModel
 {
 	private $_name_new;
 
+	private function set_names($first, $last)
+	{
+		// For now, only one name is supported
+		if (count($this->bean->xownNameList) == 0)
+		{
+			$name = $this->_name_new;
+			$this->bean->xownNameList[] = $name;
+		} else
+		{
+			$name = \reset($this->bean->xownNameList);
+		}
+		$name->first = $first;
+		$name->last  = $last;
+
+		return true;
+	}
+
 	private function edit_place($json, $type)
 	{
 		$place = \reset($this->bean->withCondition('type = ?', array($type))->xownPlaceList);
-		if (isset($json->removed) && $json->removed && $place)
+
+		if (\array_key_exists('removed', $json) && $json['removed'] === true && $place)
 		{
 			unset($this->bean->xownPlaceList[$place->id]);
 		} else
-		if (isset($json->text) && isset($json->lon) && isset($json->lat))
 		{
-			$pod = new Place();
-			$bean = $place ? $place : $pod->setupNew();
-			$bean->name = $json->text;
-			$bean->lon = $json->lon;
-			$bean->lat = $json->lat;
-			$bean->type = $type;
-			if (!$place) $this->bean->xownPlaceList[] = $bean;
+			$json['type'] = $type;
+
+			if (!$place)
+			{
+				$pod = new Place();
+				$place = $pod->setupNew();
+				$place->edit($json);
+				$this->bean->xownPlaceList[] = $place;
+			}
+			else $place->edit($json);
 		}
 	}
 
@@ -36,6 +56,7 @@ class ModelPerson extends \RedBean_SimpleModel
 		$place = \reset($this->bean->withCondition('type = ?', array($type))->xownPlaceList);
 		return $place ? $place->name : '';
 	}
+
 
 	public static function makeLinks($persons)
 	{
@@ -74,26 +95,6 @@ class ModelPerson extends \RedBean_SimpleModel
 		 */
 
 		return \array_values($this->bean->xownNameList);
-	}
-
-	public function setNames($first, $last)  // TODO: private?
-	{
-		if (!\is_string($first) || (strlen($first) == 0) ||
-		    !\is_string($last)  || (strlen($last) == 0)) return false;
-
-		// For now, only one name is supported
-		if (count($this->bean->xownNameList) == 0)
-		{
-			$name = $this->_name_new;
-			$this->bean->xownNameList[] = $name;
-		} else
-		{
-			$name = \reset($this->bean->xownNameList);
-		}
-		$name->first = $first;
-		$name->last  = $last;
-
-		return true;
 	}
 
 	public function displayName($sep = ' ')
@@ -195,23 +196,47 @@ class ModelPerson extends \RedBean_SimpleModel
 		return $ret;
 	}
 
-	public function edit($rq)
+	public function edit($input)
 	{
 		$bean = $this->bean;
 
-		if (!$this->setNames($rq->post('rdk_firstname'), $rq->post('rdk_lastname'))) return false;
+		$d = Pod::validate($input, array(
+				array('required', array('rdk_firstname', 'rdk_lastname')),
+				array('dateFormat', 'rdk_birth_date', 'j.n.Y')
+			));
 
-		$birth_date = $rq->post('rdk_birth_date');
+		$this->set_names($d['rdk_firstname'], $d['rdk_lastname']);
+
+		$birth_date = $d['rdk_birth_date'];
 		if ($birth_date)
 		{
 			$date = dateToIso($birth_date);
 			if ($date) $this->birth_date = $date;
 		} else unset($this->birth_date);
 
-		$birth_place = \json_decode($rq->post('rdk_birth_place'));
+		$birth_place = \json_decode($d['rdk_birth_place'], true);
 		if ($birth_place) $this->edit_place($birth_place, Place::TypeBirth);
 
 		return true;
+	}
+
+	public function editNewParent($input, $num)
+	{
+		$d = Pod::validate($input, array(
+				array('required', array('rdk_p'.$num.'_firstname', 'rdk_p'.$num.'_lastname'))
+			));
+
+		$this->set_names($d['rdk_p'.$num.'_firstname'], $d['rdk_p'.$num.'_lastname']);
+	}
+
+	static public function editNewParents($input, $p1, $p2)
+	{
+		Pod::validate($input, array(
+				array('required', array('rdk_p1_firstname', 'rdk_p1_lastname', 'rdk_p2_firstname', 'rdk_p2_lastname'))
+			));
+
+		$p1->editNewParent($input, 1);
+		$p2->editNewParent($input, 2);
 	}
 
 	public function canBeDeleted()

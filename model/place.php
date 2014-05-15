@@ -1,6 +1,7 @@
 <?php
 namespace Rodokmen;
 use \R;
+use \Valitron\Validator;
 
 
 class Place extends Pod
@@ -20,6 +21,26 @@ class Place extends Pod
 
 class ModelPlace extends \RedBean_SimpleModel
 {
+	public function edit($array)
+	{
+		// $array is same as in infoData() (except for person_name)
+
+		$v = new Validator($array);
+		$v->rule('required', array('name', 'lon', 'lat', 'type'));
+		$v->rule('numeric', 'lon');
+		$v->rule('numeric', 'lat');
+
+		if (!$v->validate()) return false;
+		$d = $v->data();
+
+		$this->name = $d['name'];
+		$this->lon  = \floatval($d['lon']);
+		$this->lat  = \floatval($d['lat']);
+		$this->type = $d['type'];
+
+		return true;
+	}
+
 	public function infoData()
 	{
 		$person = $this->person;

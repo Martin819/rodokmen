@@ -1,5 +1,6 @@
 <?php
 namespace Rodokmen;
+use \JSCB\Callback;
 
 
 RouterBase::regRouter('Rodokmen\RouterAdmin');
@@ -27,9 +28,13 @@ class RouterAdmin extends RouterBase
 			})->name('admin-user-new');
 			$app->post('/admin/user/new', function() use ($app)
 			{
-				$user = User::setupNew();
-				if (!$user->edit($app->request, true)) $app->halt(403);
-				$app->logOp(Op::Create, User::bean, $user->id());
+				DB::transaction(DB::auth, function() use ($app)
+				{
+					$user = User::setupNew();
+					$user->edit($_POST, true);
+					$app->logOp(Op::Create, User::bean, $user->id());
+					return array('reload');
+				});
 			})->name('admin-user-new-p');
 
 			// Edit user:
@@ -45,11 +50,15 @@ class RouterAdmin extends RouterBase
 			})->name('admin-user-edit');
 			$app->post('/admin/user/edit', function() use ($app)
 			{
-				$id = $app->request->post('rdk_id');
-				$user = User::fromId($id);
-				if (!$user) $app->halt(403);
-				if (!$user->edit($app->request)) $app->halt(403);
-				$app->logOp(Op::Update, User::bean, $id);
+				DB::transaction(DB::auth, function() use ($app)
+				{
+					$id = $app->request->post('rdk_id');
+					$user = User::fromId($id);
+					if (!$user) $app->halt(403);
+					$user->edit($_POST);
+					$app->logOp(Op::Update, User::bean, $id);
+					return array('reload');
+				});
 			})->name('admin-user-edit-p');
 
 			// Delete user:
@@ -72,6 +81,7 @@ class RouterAdmin extends RouterBase
 				if (!$user) $app->halt(403);
 				$app->logOp(Op::Delete, User::bean, $id);
 				$user->trash();
+				Callback::sendCb('reload');
 			})->name('admin-user-delete-p');
 		});
 
@@ -85,11 +95,13 @@ class RouterAdmin extends RouterBase
 			})->name('admin-user-changepw');
 			$app->post('/admin/user/changepw', function() use ($app)
 			{
-				$rq = $app->request;
-				$user = $app->user();
-				if (!$user->validatePassword($rq->post('rdk_pw_current'))) $app->halt(403);
-				if (!$user->editPassword($rq)) $app->halt(403);
-				$app->logOp(Op::Update, User::bean, $user->id());
+				DB::transaction(DB::auth, function() use ($app)
+				{
+					$user = $app->user();
+					$user->editPassword($_POST);
+					$app->logOp(Op::Update, User::bean, $user->id());
+					return array('vexClose');
+				});
 			})->name('admin-user-changepw-p');
 		});
 	}

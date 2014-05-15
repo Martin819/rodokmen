@@ -1,5 +1,6 @@
 <?php
 namespace Rodokmen;
+use \JSCB\Callback;
 
 
 RouterBase::regRouter('Rodokmen\RouterGallery');
@@ -34,12 +35,15 @@ class RouterGallery extends RouterBase
 			})->name('gallery-upload');
 			$app->post('/gallery/upload', $self->authRole(Role::Contrib), function() use ($app)
 			{
-				$media = new Media();
-				$bean = $media->setupNew();
-				if (!$bean->addUpload($app->request)) $app->halt(403);
-				$media->store($bean);
-				$app->logOp(Op::Create, $bean);
-				$app->formResponse('reload');
+				DB::transaction(DB::data, function() use ($app)
+				{
+					$media = new Media();
+					$bean = $media->setupNew();
+					$bean->edit($_POST, true);
+					$media->store($bean);
+					$app->logOp(Op::Create, $bean);
+					return array('reload');
+				});
 			})->name('gallery-upload-p');
 
 			// Edit media:
@@ -55,12 +59,15 @@ class RouterGallery extends RouterBase
 			})->name('gallery-edit');
 			$app->post('/gallery/edit', $self->authRole(Role::Contrib), function() use ($app)
 			{
-				$media = new Media();
-				$bean = RouterBase::getBean($app->request->post('rdk_id'), $media, $app);
-				if (!$bean->edit($app->request)) $app->halt(403);
-				$media->store($bean);
-				$app->logOp(Op::Update, $bean);
-				$app->formResponse('reload');
+				DB::transaction(DB::data, function() use ($app)
+				{
+					$media = new Media();
+					$bean = RouterBase::getBean($app->request->post('rdk_id'), $media, $app);
+					$bean->edit($_POST);
+					$media->store($bean);
+					$app->logOp(Op::Update, $bean);
+					return array('reload');
+				});
 			})->name('gallery-edit-p');
 
 			// Delete media:
@@ -77,7 +84,7 @@ class RouterGallery extends RouterBase
 				$bean = RouterBase::getBean($app->request->post('rdk_id'), $media, $app);
 				$app->logOp(Op::Delete, $bean);
 				$media->trash($bean);
-				$app->formResponse('reload');
+				Callback::sendCb('reload');
 			})->name('gallery-delete-p');
 		});
 	}

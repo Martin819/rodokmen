@@ -15,17 +15,21 @@ require __DIR__.'/../lib/pbkdf2/pbkdf2.php';
 // require __DIR__.'/../lib/RedBeanPHP/rb.phar';
 require __DIR__.'/../lib/RedBeanPHP/loader.php';
 require __DIR__.'/../lib/PHPThumb/ThumbLib.inc.php';
+require __DIR__.'/../lib/Valitron/Validator.php';
+\Valitron\Validator::lang('en');
+\Valitron\Validator::langDir(__DIR__.'/../lib/Valitron/lang');
 
-// App
+// App & Utils
 require __DIR__.'/logger.php';
 require __DIR__.'/app.php';
-
-// Model
 require __DIR__.'/utils.php';
 require __DIR__.'/db.php';
 require __DIR__.'/session.php';
 require __DIR__.'/config.php';
 require __DIR__.'/pod.php';
+require __DIR__.'/jscb.php';
+
+// Model
 require __DIR__.'/user.php';
 require __DIR__.'/person.php';
 require __DIR__.'/marriage.php';
