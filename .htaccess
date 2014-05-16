@@ -18,6 +18,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond $1 ^rs/.*[.]css$  [OR]
 RewriteCond $1 ^rs/.*[.]js$   [OR]
 RewriteCond $1 ^rs/.*[.]png$  [OR]
+RewriteCond $1 ^rs/.*[.]svg$  [OR]
 RewriteCond $1 ^rs/.*[.]gif$
 RewriteCond $1#%{REQUEST_URI} rs/([^#]*)[.]([^#]*)#(.*)rs/\1[.]\2$
 RewriteRule ^(.*)$ %3view/rs/%2/%1.%2 [L]

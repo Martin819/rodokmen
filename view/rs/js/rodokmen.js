@@ -139,6 +139,25 @@
 		return false;
 	}
 
+	rdk.loginAjax = function(e, status)
+	{
+		if (status == 'start')
+		{
+			this.css('visibility', 'hidden');
+			$lb = $('#loginbox');
+			rdk.spinnerOn(false);
+			rdk.spinnerOn($lb);
+			e.stopPropagation();
+		}
+	}
+
+	rdk.loginFail = function(e)
+	{
+		this.css('visibility', 'inherit');
+		this.find('#loginfail').css('visibility', 'inherit');
+		this.find('.focus').select();
+	}
+
 	rdk.sidebarJscbAjax = function(e, status)
 	{
 		if (status == 'start')

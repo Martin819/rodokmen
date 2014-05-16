@@ -1,5 +1,6 @@
 <?php
 namespace Rodokmen;
+use \JSCB\Callback;
 
 
 RouterBase::regRouter('Rodokmen\RouterMain');
@@ -24,9 +25,9 @@ class RouterMain extends RouterBase
 		{
 			$user = User::fromUsername($app->request->post('rdk_username'));
 			if ($user && $user->login($app->request->post('rdk_pw')))
-				$app->redirect($app->urlFor('home'));
+				Callback::sendCb('location', array($app->urlFor('home')));
 			else
-				echo 'login error';  // FIXME: flash error, redirect back
+				Callback::sendCb('loginFail');
 		});
 
 		$app->get('/logout', function() use ($app)

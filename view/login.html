@@ -1,27 +1,30 @@
 {% include 'header.html' %}
 </head>
-<body class="login">
-{# FIXME: css classes #}
-<div id="login">
-	<h1>Přihlášení do aplikace Rodokmen</h1>
-	<form action="{{ baseUrl() }}/login" method="post">
-		<div>
-			<label for="username">Jméno:</label>
-			<input type="text" name="rdk_username" id="username" class="in-text focus round-small"/>
-		</div>
-		<div>
-			<label for="password">Heslo:</label>
-			<input type="password" name="rdk_pw" id="password" class="in-text round-small"/>
-		</div>
-		{# <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/> #}
-		<input type="submit" value="Přihlásit" class="right" />
-	</form>
-</div>
-<script type="text/javascript">
-	$(document).ready(function()
-	{
-		$('.focus').focus();
-	});
-</script>
+{% spaceless %}
+<body class="jscb">
+	<div id="spinner"></div>
+	<div id="loginbg">
+		<img src="rs/logo-white.svg" />
+	</div>
+	<div id="loginbox">
+		<form action="{{urlFor('login')}}" method="post" class="jscb" data-jscb='[["submit"], ["jscb:ajax", "loginAjax"]]'>
+			<h1>Přihlášení do aplikace Rodokmen</h1>
+			<div id="loginfail"><strong>Chyba:</strong> Nesprávné jméno nebo heslo</div>
+			<table>
+				<tr>
+					<td><label for="username" class="right">Jméno:</label></td>
+					<td><input type="text" name="rdk_username" class="focus edit jscb"/></td>
+				</tr>
+				<tr>
+					<td><label for="password" class="right">Heslo:</label></td>
+					<td><input type="password" name="rdk_pw" class="edit"/></td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="submit" value="Přihlásit" class="right" /></td>
+				</tr>
+			</table>
+		</form>
+	</div>
 </body>
+{% endspaceless %}
 </html>
