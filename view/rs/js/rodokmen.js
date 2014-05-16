@@ -128,12 +128,11 @@
 		{
 			if (status == 'start')
 			{
-				rdk.spinnerOn(false);
-				rdk.spinnerOn($(e.target));
+				rdk.spinner.play($(e.target));
 			}
 			else if (status == 'always')
 			{
-				rdk.spinnerOn(false);
+				rdk.spinner.pause();
 			}
 		}
 		return false;
@@ -145,8 +144,7 @@
 		{
 			this.css('visibility', 'hidden');
 			$lb = $('#loginbox');
-			rdk.spinnerOn(false);
-			rdk.spinnerOn($lb);
+			rdk.spinner.play($lb);
 			e.stopPropagation();
 		}
 	}
@@ -166,8 +164,7 @@
 			sbLoadTimer = setTimeout(function()
 			{
 				$('#sidebar-content').detach();
-				rdk.spinnerOn(false);
-				rdk.spinnerOn($('#sidebar'));
+				rdk.spinner.play($('#sidebar'));
 				clearTimeout(sbLoadTimer);
 			}, 750);
 			return false;
@@ -175,7 +172,7 @@
 		else if (status == 'always')
 		{
 			clearTimeout(sbLoadTimer);
-			rdk.spinnerOn(false);
+			rdk.spinner.pause();
 			return false;
 		}
 
@@ -275,7 +272,7 @@
 					}, 100);
 				});
 
-				rdk.spinnerOn(false);
+				rdk.spinner.pause();
 
 				if (cyid) $().jscb('cySelect', cyid);
 
@@ -342,7 +339,7 @@
 	{
 		if (status == 'start')
 		{
-			rdk.spinnerOn(this.closest('.vex'));
+			rdk.spinner.play(this.closest('.vex'));
 			this.children().hide();
 			e.stopPropagation();
 		}
@@ -358,7 +355,7 @@
 	{
 		var $vex = this.closest('.vex');
 		this.find('form').jscb('abortAjax');
-		rdk.spinnerOn(false);
+		rdk.spinner.pause();
 		vex.close($vex.data('vex').id);
 	}
 
@@ -396,6 +393,17 @@
 
 	$(document).ready(function()
 	{
+		$.ajaxSetup({ timeout: 20000 });
+
+		rdk.spinner = new rdk.Spinner(undefined,
+		{
+			size: 80,
+			stroke: 4,
+			color1: '#1173A7',
+			color2: '#1173A7',
+			speed: 8000
+		});
+
 		$('.jscb').jscb(
 		{
 			namespace: function() { return window.rdk; },
@@ -411,4 +419,5 @@
 			]
 		});
 	});
+
 }(window.rdk = window.rdk || {}, jQuery));

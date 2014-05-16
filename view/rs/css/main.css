@@ -222,12 +222,3 @@ a.button:hover
 
 .comma:after            { content: ', '; }
 .comma:last-child:after { content: '';   }
-
-#spinner
-{
-	position: absolute;
-	width: 90px;
-	height: 90px;
-	margin: -45px 0 0 -45px;
-	z-index: 1;
-}
