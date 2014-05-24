@@ -121,7 +121,7 @@
 	}
 
 
-	rdk.globalAjax = function(e, status, xhr)
+	rdk.globalAjax = function(e, status)
 	{
 		if (status == 'fail') vex.dialog.alert(rdk.strings.ajaxErrMsg['get']);
 		else if (e)

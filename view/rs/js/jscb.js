@@ -3,6 +3,7 @@
 (function($, undefined)
 {
 	var builtins = {};
+	var navigating = false;
 
 
 	function call_cb($this, cb, eo, args)
@@ -17,7 +18,10 @@
 	{
 		xhr
 		.done(function()   { $target.trigger('jscb:ajax', ['done', xhr]);   })
-		.fail(function()   { $target.trigger('jscb:ajax', ['fail', xhr]);   })
+		.fail(function(jqXHR, textStatus, errorThrown)
+		{
+			if (!navigating) $target.trigger('jscb:ajax', ['fail', xhr, textStatus, errorThrown]);
+		})
 		.always(function() { $target.trigger('jscb:ajax', ['always', xhr]); });
 		$target.trigger('jscb:ajax', ['start', xhr]);
 	}
@@ -25,7 +29,8 @@
 	function cb_from_ev($this, ev)
 	{
 		var prefix = $this.attr('id');
-		if (prefix === void 0) prefix = $this.prop('tagName').toLowerCase();
+		if (prefix === undefined) prefix = $this.prop('tagName').toLowerCase();
+		if (prefix === undefined) return undefined;
 
 		if (ev === '') return prefix + 'Init';
 		else
@@ -44,13 +49,13 @@
 		var cb = args.shift();
 
 		// If no cb is supplied infer it from $this and event name:
-		if (cb === void 0 || cb === '') cb = cb_from_ev($this, ev);
+		if (cb === undefined || cb === '') cb = cb_from_ev($this, ev);
+		if (cb === undefined) throw 'JSCB: callback neither specified nor could it be inferred';
 
 		if (ev === '') call_cb($this, cb, undefined, args);
 		else $this.on(ev, function(eo)
 		{
-			var evargs = [].slice.call(arguments);
-			evargs.shift();
+			var evargs = [].slice.call(arguments, 1);
 			evargs = evargs.concat(args);
 			return call_cb($this, cb, eo, evargs);
 		});
@@ -78,20 +83,69 @@
 	function apply_opts(opts)
 	{
 		$.extend($.fn.jscb.opts, opts);
-		if (typeof $.fn.jscb.opts.namespace !== 'function') throw 'JSCB: callback namespace not (correctly) defined';
+		if (typeof $.fn.jscb.opts.namespace !== 'function') throw 'JSCB: callback namespace not defined or is not a function';
+
+		// Special selectors:
+		for (var i = 0; i < $.fn.jscb.opts.binds.length;)
+		{
+			var b = $.fn.jscb.opts.binds[i];
+			var sel = b[0];
+			var $e;
+			switch (sel)
+			{
+				case ':window':   $e = $(window);   break;
+				case ':document': $e = $(document); break;
+				default: $e = false;
+			}
+			if ($e)
+			{
+				bind($e, b.slice(1));
+				$.fn.jscb.opts.binds.splice(i, 1);  // Remove current element (these should only be considered once)
+			}
+			else i++;
+		};
+
+		// Bind beforeunload so that ajax errors are not reported while user navigates away
+		$(window).on('beforeunload', function() { navigating = true; });
 	}
 
 
 	builtins.$ = function(e, fn)
 	{
-		var args = [].slice.call(arguments);
-		if (typeof $.fn[fn] === 'function') $.fn[fn].apply(this, args.slice(2));
+		var args = [].slice.call(arguments, 2);
+		if (typeof $.fn[fn] === 'function') $.fn[fn].apply(this, args);
 	}
 
 	builtins.multiple = function(e, cbs)
 	{
 		if (!$.isArray(cbs)) return;
 		for (var i = 0; i < cbs.length; i++) ajax_response_cb(this, cbs[i]);
+	}
+
+	builtins.log = function(e)
+	{
+		if ('console' in window && 'log' in window.console)
+		{
+			var args = [].slice.call(arguments, 1);
+
+			if (args.length < 1) return;
+
+			if ('apply' in window.console.log && typeof window.console.log.apply == 'function')
+			{
+				window.console.log.apply(window.console, args);
+			}
+			else
+			{
+				var invocation = 'window.console.log(args[0]';
+				for (var i = 1; i < args.length; i++) {
+					invocation += ',args['+i+']';
+				};
+				invocation += ')';
+
+				logfn = new Function('args', invocation);
+				logfn(args);
+			}
+		}
 	}
 
 	builtins.alert = function(e, msg)
@@ -101,7 +155,7 @@
 
 	builtins.focus = function(e, ele)
 	{
-		if (ele !== void 0) ele.focus();
+		if (ele !== undefined) ele.focus();
 		else this.focus();
 	}
 
@@ -135,11 +189,11 @@
 	{
 		if (e) e.preventDefault();
 		this.jscb('abortAjax');
-		var args = [].slice.call(arguments);
+		var args = [].slice.call(arguments, 3);
 
 		(function(self)
 		{
-			var cbargs = args.slice(3);
+			var cbargs = args;
 			var xhr = $.get(url)
 			.done(function(data)
 			{
@@ -214,8 +268,7 @@
 
 		if (typeof arg === 'string')
 		{
-			var moreargs = [].slice.call(arguments);
-			moreargs.shift();
+			var moreargs = [].slice.call(arguments, 1);
 			call_cb(this, arg, undefined, moreargs);
 			return this;
 		}
