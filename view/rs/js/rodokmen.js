@@ -153,7 +153,7 @@
 	{
 		this.css('visibility', 'inherit');
 		this.find('#loginfail').css('visibility', 'inherit');
-		this.find('.focus').select();
+		this.find('.focus').focus().select();
 	}
 
 	rdk.sidebarJscbAjax = function(e, status)

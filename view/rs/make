@@ -1,0 +1,59 @@
+#!/bin/sh
+
+
+set -e
+
+# Ensure we're in the right dir:
+cd "$(dirname $(readlink -f $0))"
+
+
+css="\
+./css/admin.css \
+./css/fotorama.css \
+./css/gallery.css \
+./css/leaflet.css \
+./css/main.css \
+./css/map.css \
+./css/select2.css \
+./css/sidebar.css \
+./css/vex.css \
+./css/vex-theme-plain-mod.css"
+
+css_bundle='./css/rdk.bundle.css'
+
+js="\
+./js/lib/jquery.min.js \
+./js/lib/jquery.form.js \
+./js/lib/raphael.min.js \
+./js/lib/vex.combined.min.js \
+./js/lib/sprintf.min.js \
+./js/lib/jquery.mousewheel.js \
+./js/lib/jquery.event.drag.js \
+./js/lib/jquery.mask.min.js \
+./js/lib/cytoscape.noext.min.js \
+./js/lib/select2.min.js \
+./js/lib/fotorama.js \
+./js/lib/leaflet.js"
+
+js_min="\
+./js/jscb.js \
+./js/utils.js \
+./js/rodokmen.js \
+./js/cy.layout.rodokmen.js \
+./js/cy.renderer.raphael.js"
+
+js_bundle='./js/rdk.bundle.js'
+
+
+# CSS:
+echo "Making $css_bundle"
+paste -d '\n' -s $css > "$css_bundle"
+
+# JS:
+echo "Making $js_bundle"
+paste -d '\n' -s $js > "$js_bundle"     # using paste to insert newlines between files (otherwise js comments cause trouble)
+# Minify what's to be minified:
+tmp=$(mktemp ./js/tmp.XXXXXX.js)
+paste -d '\n' -s $js_min > "$tmp"
+yuicompressor "$tmp" >> "$js_bundle"
+rm "$tmp"
