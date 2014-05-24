@@ -144,4 +144,53 @@
 		return this;
 	}
 
+	$.fn.personSelect = function()
+	{
+		var input_id = this.data('input');
+		this.after('<input type="hidden" name="'+input_id+'" id="'+input_id+'" value="" />');
+		var input = $('#'+input_id);
+
+		this.select2(
+		{
+			placeholder: "Vyhledat...",
+			multiple: true,
+			minimumInputLength: 1,
+			ajax:
+			{
+				url: function(query)
+				{
+					return rdk.ajaxUrl('/person/lookup/'+query);
+				},
+				type: "POST",
+				dataType: 'json',
+				quietMillis: 500,
+				results: function (data)
+				{
+					return {
+						results: $.map(data, function(p, i)
+						{
+							return { id: p.id, text: rdk.strings.idName(p.name, p.birth) };
+						})
+					};
+				}
+			},
+			initSelection: function(e, cb)
+			{
+				var tags = JSON.parse(e.val()).tags;
+				e.val(''); // This is needed, otherwise select2 _appends_ the data to the existing value
+				cb($.map(tags, function(tag)
+				{
+					return { id: tag.id, text: rdk.strings.idName(tag.name, tag.birth) };
+				}));
+			}
+		});
+
+		this.on('change', function(e)
+		{
+			input.val(JSON.stringify({tags: e.val}));
+		});
+
+		return this;
+	}
+
 }(window.rdk = window.rdk || {}, jQuery));

@@ -29,7 +29,7 @@
 	function placeMerge(place, json)
 	{
 		if (place.text[json.type] === void 0) place.text[json.type] = [];
-		place.text[json.type].push(json.person_name);
+		place.text[json.type].push(rdk.strings.idName(json.person_name.name, json.person_name.birth));
 	}
 
 	function makePlaces(json)
@@ -205,7 +205,7 @@
 						'text-outline-width': 0,
 						'color': '#fff',
 						'font-size': 15,
-						'font-weight': 'bold',
+						'font-weight': 'normal',
 						'font-family': 'sans-serif'
 					})
 				.selector('node.m')
@@ -359,11 +359,6 @@
 		vex.close($vex.data('vex').id);
 	}
 
-	rdk.nominatim = function(e)
-	{
-		this.nominatim();
-	}
-
 	rdk.fotorama = function(e, fid)
 	{
 		if (!$(e.target).hasClass('photo')) return;
@@ -411,7 +406,9 @@
 			[
 				['body', 'jscb:ajax', 'globalAjax'],
 				['.focus', '', 'focus'],
-				['.nominatim', '', 'nominatim'],
+				['.nominatim', '', '$', 'nominatim'],
+				['.fotorama', '', '$', 'fotorama'],
+				['.personSelect', '', '$', 'personSelect'],
 				['.vex-dialog-form', 'submit'],
 				['.vex-dialog-form', 'jscb:ajax', 'vexAjax'],
 				['.vex-dialog-form', 'jscb:validationError', 'vexValidationError'],

@@ -119,10 +119,39 @@ class ModelMedia extends \RedBean_SimpleModel
 
 		$this->year = $d['rdk_year'];
 		$this->comment = $d['rdk_comment'];
+
+		// Person-Media tags:
+		$tags = \json_decode($d['rdk_tags'], true);
+		if ($tags && \array_key_exists('tags', $tags))
+		{
+			$pod_p = new Person();
+			$this->bean->sharedPersonList = array();
+
+			foreach ($tags['tags'] as $tag)
+			{
+				$person = $pod_p->fromId($tag);
+				if ($person) $this->bean->sharedPersonList[] = $person;
+			}
+		}
 	}
 
 	public function origFilename()
 	{
 		return $this->media_fn($this->orig_url);
+	}
+
+	public function tags($json = false)
+	{
+		$tags = array();
+
+		foreach ($this->bean->sharedPersonList as $person)
+		{
+			$tags[] = $person->idName();
+		}
+
+		if ($json)
+			return \json_encode(array('tags' => $tags ? $tags : false), JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS);
+		else
+			return $tags;
 	}
 }

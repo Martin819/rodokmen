@@ -10,8 +10,8 @@ class Marriage extends Pod
 
 class ModelMarriage extends \RedBean_SimpleModel
 {
-	public function dispense() { $this->bean->via('relation'); }
-	public function open() { $this->bean->via('relation'); }
+	public function dispense() { $this->bean->noLoad()->via('relation')->sharedPersonList; }
+	public function open() { $this->bean->noLoad()->via('relation')->sharedPersonList; }
 
 	public function update()
 	{

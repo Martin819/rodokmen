@@ -8,10 +8,17 @@
 
 #fotorama .html
 {
+	background-image: url('bg-opacity.png');
 	position: absolute;
-	right: 0;
+	left: 0;
 	bottom: 0;
-	padding: 0 30px 10px 0;
+	padding: 5px 10px 5px 30px;
+	max-width: 30%;
+}
+
+#fotorama .html p
+{
+	margin: 5px 0;
 }
 
 #gallery

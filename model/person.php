@@ -6,6 +6,24 @@ use \R;
 class Person extends Pod
 {
 	public function __construct() { parent::__construct('person'); }
+
+	public function lookup($query)
+	{
+		// Search persons by name, return json for select2
+
+		$query = '%'.$query.'%';
+		$this->dbSelect();
+		$beans = R::find('name', 'first LIKE ? OR last LIKE ?', array($query, $query));
+
+		$ret = array();
+
+		foreach ($beans as $bean)
+		{
+			$ret[] = $bean->person->idName();
+		}
+
+		return \json_encode($ret, JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS);
+	}
 }
 
 class ModelPerson extends \RedBean_SimpleModel
@@ -68,12 +86,12 @@ class ModelPerson extends \RedBean_SimpleModel
 	public function dispense()
 	{
 		$this->_name_new = R::dispense('name');
-		$this->bean->via('relation')->sharedMarriageList;
+		$this->bean->noLoad()->via('relation')->sharedMarriageList;
 	}
 
 	public function open()
 	{
-		$this->bean->via('relation')->sharedMarriageList;
+		$this->bean->noLoad()->via('relation')->sharedMarriageList;
 	}
 
 
@@ -104,6 +122,21 @@ class ModelPerson extends \RedBean_SimpleModel
 		return $n->first.$sep.$n->last;
 	}
 
+	public function idName($value='')
+	{
+		// Like display name, but year of birth is added for unambigous identification
+
+		$name = $this->displayName();
+		$birth = \DateTime::createFromFormat('Y-m-d', $this->birth_date);
+		if ($birth) $birth = $birth->format('Y');
+
+		return array(
+				'id' => $this->id,
+				'name' => $name,
+				'birth' => $birth
+			);
+	}
+
 	public function parentMarriage()
 	{
 		$m = $this->bean->withCondition('relation.role = ?', array('child'))->sharedMarriageList;
@@ -128,6 +161,13 @@ class ModelPerson extends \RedBean_SimpleModel
 		$ret = array();
 		$ms = $this->marriages();
 		foreach ($ms as $m) $ret = \array_merge($ret, $m->children());
+		return $ret;
+	}
+
+	public function media($shuffle = false)
+	{
+		$ret = \array_values($this->bean->sharedMediaList);
+		if ($shuffle) \shuffle($ret);
 		return $ret;
 	}
 
@@ -180,6 +220,7 @@ class ModelPerson extends \RedBean_SimpleModel
 			'parentMarriage' => $pm ? $pm->cyId() : '',
 			'parents' => self::makeLinks($this->parents()),
 			'children' => self::makeLinks($this->children()),
+			'media' => $this->media(true)
 		);
 
 		$ret['marriages'] = array();

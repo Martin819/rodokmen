@@ -12,6 +12,10 @@
 			<input type="text" name="rdk_year" class="{% if not upload %}focus {% endif %}vex-dialog-edit" value="{{bean.year}}" />
 		</div>
 		<div class="vex-input-field">
+			<label for="rdk_comment">Na fotografii</label>
+			<input type="hidden" class="personSelect select2" style="width:70%" data-input="rdk_tags" value="{{bean.tags(true)}}" />
+		</div>
+		<div class="vex-input-field">
 			<label for="rdk_comment">Komentář</label>
 			<textarea name="rdk_comment" class="vex-dialog-edit" rows="3">{{bean.comment}}</textarea>
 		</div>

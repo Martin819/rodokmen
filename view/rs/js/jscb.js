@@ -82,6 +82,12 @@
 	}
 
 
+	builtins.$ = function(e, fn)
+	{
+		var args = [].slice.call(arguments);
+		if (typeof $.fn[fn] === 'function') $.fn[fn].apply(this, args.slice(2));
+	}
+
 	builtins.multiple = function(e, cbs)
 	{
 		if (!$.isArray(cbs)) return;

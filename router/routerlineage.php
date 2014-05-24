@@ -224,6 +224,14 @@ class RouterLineage extends RouterBase
 					return array('cyEdited');
 				});
 			})->name('marriage-delete-p');
+
+
+			// Person lookup for photo tagging
+			$app->post('/person/lookup/:query', $self->authRole(Role::Contrib), $self->contentJson(), function($query) use ($app)
+			{
+				$pod = new Person();
+				echo $pod->lookup($query);
+			});
 		});
 	}
 

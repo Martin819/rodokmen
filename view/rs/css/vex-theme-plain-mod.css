@@ -95,7 +95,7 @@
 }
 
 .vex.vex-theme-plain .vex-dialog-form input[type='file'].vex-dialog-edit,
-.vex.vex-theme-plain .vex-dialog-form .nominatim
+.vex.vex-theme-plain .vex-dialog-form .select2
 {
 	font-size: .8em;
 }

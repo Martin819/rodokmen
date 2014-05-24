@@ -1,18 +1,23 @@
 {# Twig strings #}
 
-{% macro roleNames(i) %}{#
-#}{% set arr = [ 'Žádné', 'Prohlížení', 'Úprava dat', 'Administrace' ] %}
+{% macro roleNames(i) %}
+	{% set arr = [ 'Žádné', 'Prohlížení', 'Úprava dat', 'Administrace' ] %}
 {{arr[i]}}
 {% endmacro %}
 
 {% macro jsStrings() %}{
 	ajaxErrMsg:
 	{
-		get: 'Chyba při načítání dat',
-		post: 'Chyba při odesílání dat'
+		get: '{{ "Chyba při načítání dat" }}',
+		post: '{{ "Chyba při odesílání dat" }}'
+	},
+	idName: function(name, birth_year)
+	{
+		if (!birth_year) birth_year = '?';
+		return sprintf('{{ "%s (nar. %s)" }}', name, birth_year);
 	},
 	mapPopup:
 	{
-		birth: 'Zde se narodili:'
+		birth: '{{ "Zde se narodili:" }}'
 	},
 }{% endmacro %}

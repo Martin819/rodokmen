@@ -50,7 +50,7 @@ class ModelPlace extends \RedBean_SimpleModel
 			'lon' => $this->lon,
 			'lat' => $this->lat,
 			'type' => $this->type,
-			'person_name' => $person->displayName()
+			'person_name' => $person->idName()
 		);
 	}
 }

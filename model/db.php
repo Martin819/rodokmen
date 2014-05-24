@@ -25,11 +25,10 @@ abstract class Db
 	static public function setup($dbAuth, $dbData, $frozen)
 	{
 		R::setup();
-		R::freeze($frozen);
 		$dbAuth = self::check_sqlite($dbAuth);
 		$dbData = self::check_sqlite($dbData);
-		R::addDatabase(self::auth, $dbAuth); // FIXME: db addresses
-		R::addDatabase(self::data, $dbData);
+		R::addDatabase(self::auth, $dbAuth, NULL, NULL, $frozen); // FIXME: uri, username & pw from config
+		R::addDatabase(self::data, $dbData, NULL, NULL, $frozen);
 	}
 
 	static public function transaction($dbname, $function)
