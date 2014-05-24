@@ -56,4 +56,5 @@ paste -d '\n' -s $js > "$js_bundle"     # using paste to insert newlines between
 tmp=$(mktemp ./js/tmp.XXXXXX.js)
 paste -d '\n' -s $js_min > "$tmp"
 yuicompressor "$tmp" >> "$js_bundle"
+echo >> "$js_bundle"
 rm "$tmp"

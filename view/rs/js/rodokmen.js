@@ -86,7 +86,7 @@
 
 	function displayMap(places)
 	{
-		map = L.map('map').setView([51.505, -0.09], 13);
+		map = L.map('map').setView([42, 0], 2);
 		L.tileLayer(rdk.mapTileServer,
 		{
 			attribution: rdk.mapAttribution,
@@ -116,7 +116,7 @@
 			marker.addTo(map);
 		};
 
-		map.fitBounds(L.latLngBounds(bounds), { maxZoom: 8 });
+		if (bounds.length > 0) map.fitBounds(L.latLngBounds(bounds), { maxZoom: 8 });
 		if (map.getZoom() > 3) map.zoomOut(1, { animate: false });
 	}
 
