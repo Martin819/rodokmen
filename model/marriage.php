@@ -10,8 +10,11 @@ class Marriage extends Pod
 
 class ModelMarriage extends \RedBean_SimpleModel
 {
-	public function dispense() { $this->bean->noLoad()->via('relation')->sharedPersonList; }
-	public function open() { $this->bean->noLoad()->via('relation')->sharedPersonList; }
+	private function person_list($role)
+	{
+		return $this->bean->via('relation')->withCondition('relation.role = ?', array($role))->sharedPersonList;
+	}
+
 
 	public function update()
 	{
@@ -34,14 +37,14 @@ class ModelMarriage extends \RedBean_SimpleModel
 
 	public function spouses()
 	{
-		$ret = $this->bean->withCondition('relation.role = ?', array('parent'))->sharedPersonList;
+		$ret = $this->person_list('parent');
 		// TODO: order by sex ? (female first)
 		return \array_values($ret);
 	}
 
 	public function children()
 	{
-		$ret = $this->bean->withCondition('relation.role = ?', array('child'))->sharedPersonList;
+		$ret = $this->person_list('child');
 		return \array_values($ret);
 	}
 

@@ -5,7 +5,7 @@ use \R;
 
 class Person extends Pod
 {
-	public function __construct() { parent::__construct('person'); }
+	public function __construct()	{ parent::__construct('person'); }
 
 	public function lookup($query)
 	{
@@ -29,6 +29,11 @@ class Person extends Pod
 class ModelPerson extends \RedBean_SimpleModel
 {
 	private $_name_new;
+
+	private function marriage_list($role)
+	{
+		return $this->bean->via('relation')->withCondition('relation.role = ?', array($role))->sharedMarriageList;
+	}
 
 	private function set_names($first, $last)
 	{
@@ -86,12 +91,6 @@ class ModelPerson extends \RedBean_SimpleModel
 	public function dispense()
 	{
 		$this->_name_new = R::dispense('name');
-		$this->bean->noLoad()->via('relation')->sharedMarriageList;
-	}
-
-	public function open()
-	{
-		$this->bean->noLoad()->via('relation')->sharedMarriageList;
 	}
 
 
@@ -139,7 +138,7 @@ class ModelPerson extends \RedBean_SimpleModel
 
 	public function parentMarriage()
 	{
-		$m = $this->bean->withCondition('relation.role = ?', array('child'))->sharedMarriageList;
+		$m = $this->marriage_list('child');
 		return \reset($m);
 	}
 
@@ -152,7 +151,7 @@ class ModelPerson extends \RedBean_SimpleModel
 
 	public function marriages()
 	{
-		$ms = $this->bean->withCondition('relation.role = ?', array('parent'))->sharedMarriageList;
+		$ms = $this->marriage_list('parent');
 		return \array_values($ms);
 	}
 
