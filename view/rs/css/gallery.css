@@ -37,6 +37,9 @@
 #gallery .photo
 {
 	display: inline-block;
+	background-color: #000;
+	background-repeat: no-repeat;
+	background-position: center;
 	vertical-align: text-top;
 	margin: 20px;
 	width: 210px;

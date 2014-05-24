@@ -4,7 +4,7 @@
 	<div id="fotorama" class="fotorama jscb" data-auto="false" data-allowfullscreen="true" data-nav="thumbs" data-width="1%" data-ratio="800/600">
 		{% spaceless %}
 	 		{% for m in media %}
-				<div data-thumb="{{m.thumb_url}}" data-img="{{m.view_url}}">
+				<div data-thumb="{{m.thumbUrl}}" data-img="{{m.viewUrl}}">
 					<div class="html">
 						<p>{{m.comment}}</p>
 						{% if m.tags() %}
@@ -36,7 +36,7 @@
 					<h2>{{m.year}}</h2>
 					{% set year = m.year %}
 				{% endif %}
-				<a href="{{m.view_url}}" class="photo jscb" data-jscb='["click", "fotorama", "{{loop.index0}}"]' style="background-image: url('{{m.thumb_url}}');">
+				<a href="{{m.viewUrl}}" class="photo jscb" data-jscb='["click", "fotorama", "{{loop.index0}}"]' style="background-image: url('{{m.thumbUrl}}');">
 					<div class="photo-tools">
 						<span class="jscb" data-jscb='["click", "location", "{{urlFor('gallery-download', {'id': m.id})}}"]'>stáhnout</span>
 						{% if contrib %}

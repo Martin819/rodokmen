@@ -38,9 +38,12 @@
 	overflow: hidden;
 }
 
-#sidebar-media a
+#sidebar-media .photo
 {
 	display: inline-block;
+	background-color: #000;
+	background-repeat: no-repeat;
+	background-position: center;
 	width: 178px;
 	height: 150px;
 	margin-right: 2px;

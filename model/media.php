@@ -35,17 +35,17 @@ class ModelMedia extends \RedBean_SimpleModel
 
 	const view_threshold_size = 1048576; // 1MB
 
-	private static function media_fn($url)
+	private static function media_fn($url_dir, $file_id, $ext)
 	{
 		// Data path is hardcoded for media, because it's also hardcoded in .htaccess
-		return __DIR__.'/../data/'.$url;
+		return __DIR__.'/../data/'.$url_dir.$file_id.'.'.$ext;
 	}
 
-	private function unlink_if_exists($orig_fn, $thumb_fn, $view_fn)
+	private static function unlink_files($file_id, $ext)
 	{
-		if (\file_exists($orig_fn))  \unlink($orig_fn);
-		if (\file_exists($thumb_fn)) \unlink($thumb_fn);
-		if (\file_exists($view_fn))  \unlink($view_fn);
+		@\unlink(self::media_fn(self::url_image_orig, $file_id, $ext));
+		@\unlink(self::media_fn(self::url_image_thumb, $file_id, 'jpg'));
+		@\unlink(self::media_fn(self::url_image_view, $file_id, 'jpg'));
 	}
 
 	private function add_image($input_name)
@@ -55,14 +55,11 @@ class ModelMedia extends \RedBean_SimpleModel
 		if (!\array_key_exists($input_name, $_FILES)) return false;
 
 		$tmp_fn = $_FILES[$input_name]['tmp_name'];
-		$ext = \pathinfo($_FILES[$input_name]['name'], PATHINFO_EXTENSION);
+		$ext = \strtolower(\pathinfo($_FILES[$input_name]['name'], PATHINFO_EXTENSION));
 		$unique_name = \uniqid('', true);
-		$orig_url  = self::url_image_orig.$unique_name.'.'.$ext;
-		$thumb_url = self::url_image_thumb.$unique_name.'.jpg';
-		$view_url  = self::url_image_view.$unique_name.'.jpg';
-		$orig_fn = self::media_fn($orig_url);
-		$thumb_fn = self::media_fn($thumb_url);
-		$view_fn = self::media_fn($view_url);
+		$orig_fn  = self::media_fn(self::url_image_orig, $unique_name, $ext);
+		$thumb_fn = self::media_fn(self::url_image_thumb, $unique_name, 'jpg');
+		$view_fn  = self::media_fn(self::url_image_view, $unique_name, 'jpg');
 
 		if (!\move_uploaded_file($tmp_fn, $orig_fn)) return false;
 
@@ -78,14 +75,13 @@ class ModelMedia extends \RedBean_SimpleModel
 		}
 		catch (Exception $e)
 		{
-			self::unlink_if_exists($orig_fn, $thumb_fn, $view_fn);
+			self::unlink_files($unique_name, $ext);
 			return false;
 		}
 
 		$this->type = 'image';
-		$this->orig_url  = $orig_url;
-		$this->thumb_url = $thumb_url;
-		$this->view_url  = $view_url;
+		$this->file_id = $unique_name;
+		$this->orig_ext = $ext;
 
 		return true;
 	}
@@ -93,10 +89,7 @@ class ModelMedia extends \RedBean_SimpleModel
 	public function after_delete()
 	{
 		// Invoked after bean is trashed
-		self::unlink_if_exists(
-			self::media_fn($this->orig_url),
-			self::media_fn($this->thumb_url),
-			self::media_fn($this->view_url));
+		self::unlink_files($this->file_id, $this->orig_ext);
 	}
 
 	public function edit($input, $upload = false)
@@ -137,7 +130,17 @@ class ModelMedia extends \RedBean_SimpleModel
 
 	public function origFilename()
 	{
-		return $this->media_fn($this->orig_url);
+		return $this->media_fn(self::url_image_orig, $this->file_id, $this->orig_ext);
+	}
+
+	public function thumbUrl()
+	{
+		return self::url_image_thumb.$this->file_id.'.jpg';
+	}
+
+	public function viewUrl()
+	{
+		return self::url_image_view.$this->file_id.'.jpg';
 	}
 
 	public function tags($json = false)
