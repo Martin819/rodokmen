@@ -361,7 +361,6 @@
 
 	rdk.fotorama = function(e, fid)
 	{
-		if (!$(e.target).hasClass('photo')) return;
 		if (e && (e.which != 1 || e.ctrlKey)) return;
 		e.preventDefault();
 		var fotorama = $('#fotorama').data('fotorama');

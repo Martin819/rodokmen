@@ -66,7 +66,7 @@ class ModelMedia extends \RedBean_SimpleModel
 		try
 		{
 			$thumb = \PhpThumbFactory::create($orig_fn);
-			$thumb->adaptiveResize(Media::thumbW, Media::thumbH);
+			$thumb->adaptiveResizeQuadrant(Media::thumbW, Media::thumbH, 'T');
 			$thumb->save($thumb_fn, 'jpg');
 
 			$view  = \PhpThumbFactory::create($orig_fn);

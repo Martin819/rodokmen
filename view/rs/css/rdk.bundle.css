@@ -1546,6 +1546,12 @@ html[dir="rtl"] .select2-search-choice-close {
 	margin-right: 2px;
 }
 
+#sidebar-media .photo img
+{
+	width: 178px;
+	height: 150px;
+}
+
 #sidebar ul
 {
 	list-style-type: none;
