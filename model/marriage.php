@@ -70,10 +70,13 @@ class ModelMarriage extends \RedBean_SimpleModel
 
 	public function sidebarData()
 	{
+		$sp = $this->spouses();
+
 		$ret = array(
 			'm' => $this->infoData(),
-			'spouses'  => ModelPerson::makeLinks($this->spouses()),
-			'children' => ModelPerson::makeLinks($this->children())
+			'spouses'  => ModelPerson::makeLinks($sp),
+			'children' => ModelPerson::makeLinks($this->children()),
+			'media'    => Media::findWithPersons($sp[0], $sp[1])
 		);
 
 		return $ret;

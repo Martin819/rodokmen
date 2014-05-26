@@ -18,6 +18,24 @@ class Media extends Pod
 	{
 		return $this->findAll('ORDER BY year DESC');
 	}
+
+	static public function findWithPersons($person1, $person2, $shuffle = false)
+	{
+		$m = new self();
+
+		$ids = R::getAll('SELECT mp1.media_id FROM media_person AS mp1
+		                  JOIN media_person AS mp2 ON mp1.media_id = mp2.media_id
+		                  WHERE mp1.person_id = ? AND mp2.person_id = ?',
+		                  array($person1->id, $person2->id));
+
+		$ids = \array_map(function($row)
+		{
+			return \intval($row['media_id']);
+		}, $ids);
+
+		if ($shuffle) \shuffle($ids);
+		return $m->fromIds($ids);
+	}
 }
 
 class ModelMedia extends \RedBean_SimpleModel
@@ -86,9 +104,13 @@ class ModelMedia extends \RedBean_SimpleModel
 		return true;
 	}
 
+	public function delete()
+	{
+		R::trashAll($this->ownMediaPerson);
+	}
+
 	public function after_delete()
 	{
-		// Invoked after bean is trashed
 		self::unlink_files($this->file_id, $this->orig_ext);
 	}
 

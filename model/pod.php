@@ -42,6 +42,12 @@ class Pod
 		return $bean->id ? $bean : false;
 	}
 
+	public function fromIds(array $ids)
+	{
+		$this->dbSelect();
+		return R::loadAll($this->name, $ids);
+	}
+
 	public function findAll($query = '')
 	{
 		$this->dbSelect();

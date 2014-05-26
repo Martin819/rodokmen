@@ -81,7 +81,7 @@ class ModelPerson extends \RedBean_SimpleModel
 	}
 
 
-	public static function makeLinks($persons)
+	static public function makeLinks($persons)
 	{
 		$ret = array();
 		foreach ($persons as $p) $ret[] = $p->linkData();
@@ -91,6 +91,11 @@ class ModelPerson extends \RedBean_SimpleModel
 	public function dispense()
 	{
 		$this->_name_new = R::dispense('name');
+	}
+
+	public function delete()
+	{
+		R::trashAll($this->ownMediaPerson);
 	}
 
 

@@ -1,6 +1,28 @@
 {% spaceless %}
 <div id="sidebar-content">
-	<div id="sidebar-media"></div>
+	<div id="sidebar-media">
+		{% for m in media|slice(0, 2) %}
+			<a href="{{m.viewUrl}}" class="photo" data-jscb='["click", "fotorama", "{{loop.index0}}"]'>
+				<img src="{{m.thumbUrl}}" />
+			</a>
+		{% endfor %}
+		<div id="fotorama" class="fotorama" data-allowfullscreen="true" data-nav="thumbs" data-width="1%" data-ratio="800/600">
+	 		{% for m in media %}
+				<div data-thumb="{{m.thumbUrl}}" data-img="{{m.viewUrl}}">
+					<div class="html">
+						<p>{{m.comment}}</p>
+						{% if m.tags() %}
+							<p>
+								{% for t in m.tags() %}
+									<span class="comma">{{t.name}}</span>
+								{% endfor %}
+							</p>
+						{% endif %}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 	<div id="marriage-h">
 		<h2><a href="{{ajs}}" data-jscb='["click", "cySelect", "{{spouses.0.cyid}}"]'>{{spouses.0.dname}}</a></h2>
 		<h2 class="marriage-eq">&#9472;&#9472;&#11044;&#9472;&#9472;</h2>
