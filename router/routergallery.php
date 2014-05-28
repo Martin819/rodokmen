@@ -39,7 +39,7 @@ class RouterGallery extends RouterBase
 				{
 					$media = new Media();
 					$bean = $media->setupNew();
-					$bean->edit($_POST, true);
+					$bean->edit(\array_merge($_FILES, $_POST), true);
 					$media->store($bean);
 					$app->logOp(Op::Create, $bean);
 					return array('reload');

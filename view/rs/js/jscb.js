@@ -218,7 +218,19 @@
 
 		this.jscb('abortAjax');
 
-		this.ajaxSubmit();
+		this.ajaxSubmit(
+		{
+			beforeSubmit: function(arr, $form, options)
+			{
+				// This is a fix for Chrome's ajax failure on form submit with nonexistent file input
+				for (var i = 0; i < arr.length; i++)
+				{
+					var f = arr[i].value;
+					if (arr[i].type === 'file' && File !== undefined && f instanceof File && f.size == 0) arr[i].value = '';
+				};
+			}
+		});
+
 		var self = this;
 		var xhr = this.data('jqxhr');
 		xhr_events(this, xhr);

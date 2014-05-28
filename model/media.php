@@ -66,14 +66,12 @@ class ModelMedia extends \RedBean_SimpleModel
 		@\unlink(self::media_fn(self::url_image_view, $file_id, 'jpg'));
 	}
 
-	private function add_image($input_name)
+	private function add_image($upload)
 	{
 		//Create thumbnail and view image, store original
 
-		if (!\array_key_exists($input_name, $_FILES)) return false;
-
-		$tmp_fn = $_FILES[$input_name]['tmp_name'];
-		$ext = \strtolower(\pathinfo($_FILES[$input_name]['name'], PATHINFO_EXTENSION));
+		$tmp_fn = $upload['tmp_name'];
+		$ext = \strtolower(\pathinfo($upload['name'], PATHINFO_EXTENSION));
 		$unique_name = \uniqid('', true);
 		$orig_fn  = self::media_fn(self::url_image_orig, $unique_name, $ext);
 		$thumb_fn = self::media_fn(self::url_image_thumb, $unique_name, 'jpg');
@@ -91,7 +89,7 @@ class ModelMedia extends \RedBean_SimpleModel
 			if (\filesize($tmp_fn) > self::view_threshold_size) $view->resize(Media::viewW, Media::viewH);
 			$view->save($view_fn, 'jpg');
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			self::unlink_files($unique_name, $ext);
 			return false;
@@ -116,21 +114,19 @@ class ModelMedia extends \RedBean_SimpleModel
 
 	public function edit($input, $upload = false)
 	{
-		// File upload validation:
-		if ($upload)
-		{
-			Pod::validate($_FILES, array(
-					array('required', array('rdk_uploadfile')),
-					array('file', 'rdk_uploadfile', Media::maxSize, self::$image_formats),
-					array('eval', 'rdk_uploadfile', $this->add_image('rdk_uploadfile'))  // NOTE: it is important this rule comes after the file rule
-				));
-		}
-
-		// Other inputs validation:
-		$d = Pod::validate($input, array(
+		$rules = array(
 				array('required', array('rdk_year')),
 				array('integer', 'rdk_year')
-			));
+			);
+
+		if ($upload)
+		{
+			$rules[] = array('required', array('rdk_uploadfile'));
+			$rules[] = array('file', 'rdk_uploadfile', Media::maxSize, self::$image_formats);
+		}
+
+		$d = Pod::validate($input, $rules);
+		if ($upload && !$this->add_image($input['rdk_uploadfile'])) throw new ValidationError('rdk_uploadfile');
 
 		$this->year = $d['rdk_year'];
 		$this->comment = $d['rdk_comment'];

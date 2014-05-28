@@ -90,7 +90,8 @@ Validator::addRule('file', function($field, $value, array $params)
 	if (\array_key_exists(0, $params))
 	{
 		// Size check
-		if (\filesize($tmp_fn) > $params[0]) return false;
+		$sz = @\filesize($tmp_fn);
+		if (($sz === false) || ($sz > $params[0])) return false;
 	}
 
 	if (\array_key_exists(1, $params))
@@ -101,8 +102,3 @@ Validator::addRule('file', function($field, $value, array $params)
 
   return true;
 }, 'Invalid upload.');
-
-Validator::addRule('eval', function($field, $value, array $params)
-{
-	return \array_key_exists(0, $params) && ($params[0] === true);
-}, '');
