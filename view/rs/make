@@ -21,7 +21,7 @@ css="\
 
 css_bundle='./css/rdk.bundle.css'
 
-js="\
+js_libs="\
 ./js/lib/jquery.min.js \
 ./js/lib/jquery.form.js \
 ./js/lib/raphael.min.js \
@@ -34,6 +34,8 @@ js="\
 ./js/lib/select2.min.js \
 ./js/lib/fotorama.js \
 ./js/lib/leaflet.js"
+
+js_libs_bundle='./js/rdk.libs.js'
 
 js_min="\
 ./js/jscb.js \
@@ -49,12 +51,10 @@ js_bundle='./js/rdk.bundle.js'
 echo "Making $css_bundle"
 paste -d '\n' -s $css > "$css_bundle"
 
+# JS libs:
+echo "Making $js_libs_bundle"
+paste -d '\n' -s $js_libs > "$js_libs_bundle"     # using paste to insert newlines between files (otherwise js comments cause trouble)
+
 # JS:
 echo "Making $js_bundle"
-paste -d '\n' -s $js > "$js_bundle"     # using paste to insert newlines between files (otherwise js comments cause trouble)
-# Minify what's to be minified:
-tmp=$(mktemp ./js/tmp.XXXXXX.js)
-paste -d '\n' -s $js_min > "$tmp"
-yuicompressor "$tmp" >> "$js_bundle"
-echo >> "$js_bundle"
-rm "$tmp"
+closure --js $js_min --create_source_map "${js_bundle}.map" --source_map_format=V3 > "$js_bundle"

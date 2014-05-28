@@ -213,7 +213,7 @@
 						'background-color': '#006280',
 						'content': '',
 						'shape': 'circle',
-						'width': 20,
+						'width': 20
 					})
 				.selector(':selected')
 					.css({
@@ -226,7 +226,7 @@
 						'width': 2,
 						'target-arrow-shape': 'none',
 						'source-arrow-shape': 'none',
-						'line-color': '#006280',
+						'line-color': '#006280'
 					})
 				.selector('edge.questionable')
 					.css({
